@@ -2,7 +2,7 @@
 
 ## Description
 
-App Ecocont is a web application that aims to promote environmental consciousness and encourage sustainable practices. It provides users with information about eco-friendly alternatives to everyday products and services.
+App Ecocont is a mobile application react native, (iOS/Android) for sales for ERP eco-cont. It provides users with information about eco-friendly alternatives to everyday products and services.
 
 ## Features
 
