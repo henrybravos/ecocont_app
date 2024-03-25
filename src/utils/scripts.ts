@@ -1,0 +1,80 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import JWT from 'expo-jwt'
+
+export const decodeToken = (auth: string): object => JWT.decode(auth, '')
+export const authenticationStorage = async (key: string) => {
+  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
+  const { authentication } = JSON.parse(storedValue)
+  return authentication
+}
+export const authorizationStorage = async (key: string) => {
+  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
+  const { authorization } = JSON.parse(storedValue)
+  return authorization
+}
+export const refreshStorage = async (key: string) => {
+  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
+  const { refresh } = JSON.parse(storedValue)
+  return `Bearer ${refresh}`
+}
+
+export const validateDNI = (dni: string) => {
+  if (dni === null) return { success: false, message: 'Ingrese el número de DNI' }
+
+  if (dni.length !== 8)
+    return { success: false, message: 'Ha ingresado un DNI con menos de 8 digitos' }
+
+  if (!/^([0-9])*$/.test(dni)) return { success: false, message: 'Ha ingresado letras' }
+
+  return { success: true, message: 'Ok' }
+}
+
+export const validateRUC = (ruc: string) => {
+  ruc = ruc.trim()
+  if (!ruc) return { success: false, message: 'Ingrese el número de RUC' }
+  if (ruc.length !== 11)
+    return { success: false, message: 'Ha ingresado un RUC con menos de 11 digitos' }
+
+  if (!/^([0-9])*$/.test(ruc)) return { success: false, message: 'Ha ingresado un RUC con letras' }
+  const rucNumber = Number(ruc)
+  if (
+    !(
+      (rucNumber >= 1e10 && rucNumber < 11e9) ||
+      (rucNumber >= 15e9 && rucNumber < 18e9) ||
+      (rucNumber >= 2e10 && rucNumber < 21e9)
+    )
+  )
+    return {
+      success: false,
+      message: 'RUC no válido!',
+    }
+
+  const lastDigit = `${rucNumber}`.substring(10, 11)
+  let sum = 0
+  const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+  factors.forEach(
+    (valor, index) => (sum += Number(`${rucNumber}`.substring(index, index + 1)) * valor),
+  )
+
+  let di = Math.trunc(sum / 11)
+  let total = 11 - (Number(sum) - Number(di) * 11)
+
+  if (total === 10) total = 0
+  if (total === 11) total = 1
+
+  return Number(lastDigit) === total
+    ? { success: true, message: 'Ok' }
+    : { success: false, message: 'RUC no válido!' }
+}
+
+declare global {
+  interface Number {
+    myFixed(decimals: number): string
+  }
+}
+
+Number.prototype.myFixed = function (decimals: number): string {
+  let rounding =
+    Math.round(parseFloat(this.toString()) * Math.pow(10, decimals)) / Math.pow(10, decimals)
+  return Number(rounding).toFixed(decimals)
+}

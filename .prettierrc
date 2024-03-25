@@ -1,0 +1,22 @@
+{
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^@components/(.*)$",
+    "^@screens/(.*)$",
+    "^@core/(.*)$",
+    "^@hooks/(.*)$",
+    "^@assets/(.*)$",
+    "^@utils/(.*)$",
+    "^@constants/(.*)$",
+    "^(?!.*[.]css$)[./].*$"
+  ],
+  "importOrderGroupNamespaceSpecifiers": true,
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports"
+  ],
+  "printWidth": 100,
+  "semi": false,
+  "singleQuote": true
+}
