@@ -1,7 +1,41 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import JWT from 'expo-jwt'
+import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms'
+import { DateTime, Duration } from 'luxon'
 
-export const decodeToken = (auth: string): object => JWT.decode(auth, '')
+import { DecodeToken } from '@core/types/token'
+
+export const decodeToken = (auth: string): DecodeToken | null => {
+  try {
+    const decoded = JWT.decode(auth, null, { algorithm: SupportedAlgorithms.HS256 })
+    return decoded as DecodeToken
+  } catch (error) {
+    console.log('Error decodeToken', error)
+    return null
+  }
+}
+export const validateToken = (token: string | undefined): boolean => {
+  if (token) {
+    const tokenDecode = decodeToken(token)
+    if (tokenDecode) {
+      const tokenExpRemain = calculateSecondsRemaining(tokenDecode.exp * 1000)
+      if (tokenExpRemain > 0) {
+        return true
+      }
+    }
+  }
+  return false
+}
+export function calculateSecondsRemaining(dateMillis: number): number
+export function calculateSecondsRemaining(dateIso: string): number
+
+export function calculateSecondsRemaining(millisOrIso: number | string): number {
+  const date1 =
+    typeof millisOrIso === 'number'
+      ? DateTime.fromMillis(millisOrIso)
+      : DateTime.fromISO(millisOrIso)
+  return date1.diffNow().milliseconds / 1000
+}
 export const authenticationStorage = async (key: string) => {
   const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
   const { authentication } = JSON.parse(storedValue)

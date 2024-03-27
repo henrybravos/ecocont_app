@@ -6,9 +6,7 @@ export type Auth = {
   moduleId?: string
   refreshToken?: string
 }
-export type AuthResponse = {
-  login: Auth & {
-    business: Business
-    locationBusiness: LocationBusiness
-  }
+export type AuthResponse = Auth & {
+  business: Business
+  locationBusiness: LocationBusiness
 }

@@ -18,11 +18,11 @@ const Home = () => {
 }
 export default () => {
   const { userAuth } = useAppData()
-  const screenOptions = useScreenOptions()
   const { setOptions } = useNavigation()
+  const screenOptions = useScreenOptions()
   const auth = userAuth?.auth
-  useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
 
+  useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
   return (
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>
       {auth?.authentication && (

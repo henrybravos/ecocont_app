@@ -4,6 +4,13 @@ export type AuthResponseApi = {
     local: LocalApi
   }
 }
+export type AuthRefreshResponseApi = {
+  refresh: {
+    authentication: string
+    authorization: string
+    refresh: string
+  }
+}
 export interface AuthApi {
   authentication?: string
   authorization?: string

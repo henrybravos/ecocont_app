@@ -5,11 +5,12 @@ import { StackHeaderOptions } from '@react-navigation/stack/lib/typescript/src/t
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
 
-import Block from '../components/Block'
-import Button from '../components/Button'
-import Image from '../components/Image'
-import Text from '../components/Text'
-import useTheme from '../hooks/useTheme'
+import Block from '@components/Block'
+import Button from '@components/Button'
+import Image from '@components/Image'
+import Text from '@components/Text'
+
+import useTheme from '@hooks/useTheme'
 
 export default () => {
   const navigation = useNavigation()

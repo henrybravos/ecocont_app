@@ -5,7 +5,7 @@ import { ProgressBar, Snackbar } from 'react-native-paper'
 
 import { Block, Button, Input, Text } from '@components/index'
 
-import { Auth } from '@core/index'
+import { AuthService } from '@core/index'
 
 import { useAppData, useTheme } from '@hooks/index'
 
@@ -28,11 +28,11 @@ const useAuth = () => {
 
   const handleSignIn = useCallback(() => {
     setLoading(true)
-    Auth.createToken(client, {
+    AuthService.createToken(client, {
       email: authInput.email,
       password: authInput.password,
     })
-      .then(({ login }) => {
+      .then((login) => {
         if (!login) {
           setError('Credenciales incorrectas')
           return

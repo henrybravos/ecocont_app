@@ -1,1 +1,1 @@
-export { default as Auth } from './graphql/Auth'
+export { default as AuthService } from './graphql/AuthService'

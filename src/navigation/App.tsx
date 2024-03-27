@@ -1,7 +1,7 @@
 import * as SplashScreen from 'expo-splash-screen'
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Platform, StatusBar } from 'react-native'
 
 import { ThemeProvider, useAppData } from '@hooks/index'

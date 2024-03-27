@@ -1,6 +1,7 @@
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
+  DrawerNavigationOptions,
   createDrawerNavigator,
   useDrawerStatus,
 } from '@react-navigation/drawer'
@@ -149,7 +150,7 @@ const DrawerContentCustom = (props: DrawerContentComponentProps) => {
 
         <Block row justify="space-between" marginTop={sizes.sm}>
           <Text color={labelColor}>Mode</Text>
-          <Switch checked={isDark} onPress={(checked: boolean) => handleChangeMode(checked)} />
+          <Switch checked={isDark} onPress={handleChangeMode} />
         </Block>
 
         <Button
@@ -177,16 +178,7 @@ export default () => {
     <Block gradient={gradients[isDark ? 'dark' : 'light']}>
       <Drawer.Navigator
         screenOptions={{
-          drawerStyle: {
-            flex: 1,
-            width: '60%',
-            borderRightWidth: 0,
-            backgroundColor: 'transparent',
-          },
-          drawerType: 'slide',
-          overlayColor: 'transparent',
-          headerShown: false,
-          sceneContainerStyle: { backgroundColor: 'transparent' },
+          ...screenOptions,
           swipeEnabled: isAuth,
         }}
         drawerContent={(props) => <DrawerContentCustom {...props} />}
@@ -195,4 +187,16 @@ export default () => {
       </Drawer.Navigator>
     </Block>
   )
+}
+const screenOptions: DrawerNavigationOptions = {
+  drawerStyle: {
+    flex: 1,
+    width: '60%',
+    borderRightWidth: 0,
+    backgroundColor: 'transparent',
+  },
+  drawerType: 'slide',
+  overlayColor: 'transparent',
+  headerShown: false,
+  sceneContainerStyle: { backgroundColor: 'transparent' },
 }
