@@ -7,7 +7,7 @@ import { DecodeToken } from '@core/types/token'
 
 export const decodeToken = (auth: string): DecodeToken | null => {
   try {
-    const decoded = JWT.decode(auth, null, { algorithm: SupportedAlgorithms.HS256 })
+    const decoded = JWT.decode(auth, null, { algorithm: SupportedAlgorithms.HS256, timeSkew: 30 })
     return decoded as DecodeToken
   } catch (error) {
     console.log('Error decodeToken', error)

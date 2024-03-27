@@ -21,7 +21,6 @@ export default () => {
   const { setOptions } = useNavigation()
   const screenOptions = useScreenOptions()
   const auth = userAuth?.auth
-
   useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
   return (
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>

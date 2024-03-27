@@ -40,6 +40,7 @@ export const useDataProvider = () => {
 
   useEffect(() => {
     const interval = setInterval(verifyAuth, 5000)
+    verifyAuth()
     return () => {
       clearInterval(interval)
     }
@@ -50,6 +51,8 @@ export const useDataProvider = () => {
     const isValidRefreshAuth = validateToken(userAuth.value?.auth?.refreshToken)
     if (isValidRefreshAuth) {
       refreshToken(userAuth.value?.auth?.refreshToken)
+    } else {
+      handleClearUserAuth()
     }
   }
   const refreshToken = async (token: string | undefined) => {
