@@ -1,13 +1,26 @@
 import { useNavigation } from '@react-navigation/core'
+import { NavigationProp } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { Fragment, useEffect } from 'react'
 import { Text, View } from 'react-native'
 
-import { Login } from '@screens/index'
+import { AreaSales, Login, OrderSales } from '@screens/index'
+
+import { AttentionPoint } from '@core/types/user'
 
 import { useAppData, useScreenOptions } from '@hooks/index'
 
-const Stack = createStackNavigator()
+import { SCREENS } from '@constants/screens'
+
+export type RootStackParamList = {
+  [SCREENS.HOME]: undefined
+  [SCREENS.AREA_SALES]: undefined
+  [SCREENS.ORDER_SALES]: AttentionPoint
+  [SCREENS.LOGIN]: undefined
+}
+export type StackNavigation = NavigationProp<RootStackParamList>
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 const Home = () => {
   return (
@@ -26,11 +39,21 @@ export default () => {
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>
       {auth?.authentication && (
         <Fragment>
-          <Stack.Screen name="Home" component={Home} options={{ title: 'Inicio' }} />
+          <Stack.Screen
+            name={SCREENS.AREA_SALES}
+            component={AreaSales}
+            options={{ title: 'Zonas de atención' }}
+          />
+          <Stack.Screen
+            name={SCREENS.ORDER_SALES}
+            component={OrderSales}
+            options={{ title: 'Pedidos' }}
+          />
+          <Stack.Screen name={SCREENS.HOME} component={Home} options={{ title: 'Inicio' }} />
         </Fragment>
       )}
       <Stack.Screen
-        name="Login"
+        name={SCREENS.LOGIN}
         component={Login}
         options={{ title: 'Ingreso', headerShown: false }}
       />

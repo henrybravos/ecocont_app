@@ -1,13 +1,12 @@
-import { DateTime } from 'luxon'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 import { AuthService } from '@core/index'
-import { Auth, Business, LocationBusiness } from '@core/types'
+import { Auth, Business, LocationBusiness, UserAuth } from '@core/types'
 
 import client from '@utils/apollo'
 import { validateToken } from '@utils/scripts'
 
-import { ITheme, light } from '@constants/index'
+import { ITheme, LOCAL, light } from '@constants/index'
 
 import useStorage from './useStorage'
 
@@ -28,14 +27,10 @@ const initValueContext: DataProviderProps = {
   handleClearUserAuth: () => {},
 }
 export const DataContext = createContext<DataProviderProps>(initValueContext)
-type UserAuth = {
-  auth?: Auth
-  business?: Business
-  locationBusiness?: LocationBusiness
-}
+
 export const useDataProvider = () => {
-  const isDark = useStorage<boolean>('isDark')
-  const userAuth = useStorage<UserAuth>('UserAuth')
+  const isDark = useStorage<boolean>(LOCAL.IS_DARK)
+  const userAuth = useStorage<UserAuth>(LOCAL.USER_AUTH)
   const [theme, setTheme] = useState<ITheme>(light)
 
   useEffect(() => {
@@ -58,7 +53,6 @@ export const useDataProvider = () => {
   const refreshToken = async (token: string | undefined) => {
     if (!token) return
     const response = await AuthService.refreshToken(client, token)
-    console.log('responseREFRESHTOKENNNNN', response.data)
     if (response.data) {
       userAuth.setValue((prev) => ({
         ...prev,

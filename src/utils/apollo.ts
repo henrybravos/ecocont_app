@@ -8,12 +8,12 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
 
-import { AuthService } from '../core'
 import { SESSION_IN_OTHER_DEVICE, TOKEN_EXPIRED, TOKEN_INVALID } from './error'
 
 const client = new ApolloClient({
   link: ApolloLink.from([
-    onError(({ networkError, operation, forward }) => {
+    onError(({ networkError }) => {
+      console.log('networkError', networkError)
       const error = networkError as ServerError
       if (error && error.statusCode) {
         switch (error.statusCode) {
