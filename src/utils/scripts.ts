@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import JWT from 'expo-jwt'
 import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms'
-import { DateTime, Duration } from 'luxon'
+import { DateTime } from 'luxon'
 
+import { UserAuth } from '@core/types'
 import { DecodeToken } from '@core/types/token'
+
+import { LOCAL } from '@constants/local-storage'
 
 export const decodeToken = (auth: string): DecodeToken | null => {
   try {
@@ -36,20 +39,15 @@ export function calculateSecondsRemaining(millisOrIso: number | string): number 
       : DateTime.fromISO(millisOrIso)
   return date1.diffNow().milliseconds / 1000
 }
-export const authenticationStorage = async (key: string) => {
-  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
-  const { authentication } = JSON.parse(storedValue)
-  return authentication
+export const getAuthenticationStorage = async () => {
+  const storedValue = (await AsyncStorage.getItem(LOCAL.USER_AUTH)) ?? '{}'
+  const { auth } = JSON.parse(storedValue) as UserAuth
+  return auth?.authentication
 }
-export const authorizationStorage = async (key: string) => {
-  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
-  const { authorization } = JSON.parse(storedValue)
-  return authorization
-}
-export const refreshStorage = async (key: string) => {
-  const storedValue = (await AsyncStorage.getItem(key)) ?? '{}'
-  const { refresh } = JSON.parse(storedValue)
-  return `Bearer ${refresh}`
+export const getAuthorizationStorage = async () => {
+  const storedValue = (await AsyncStorage.getItem(LOCAL.USER_AUTH)) ?? '{}'
+  const { auth } = JSON.parse(storedValue) as UserAuth
+  return auth?.authorization
 }
 
 export const validateDNI = (dni: string) => {

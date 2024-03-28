@@ -2,7 +2,7 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import gql from 'graphql-tag'
 
-import { authenticationStorage } from '../../utils/scripts'
+import { getAuthenticationStorage } from '../../utils/scripts'
 import { loginResponseFromApiAdapter } from '../adapters/auth.adapter'
 import { AuthRefreshResponseApi, AuthResponseApi } from '../types'
 
@@ -59,7 +59,7 @@ const AuthService = {
       `,
       variables: { refresh: authentication },
       fetchPolicy: 'no-cache',
-      context: { headers: { Authentication: `Bearer ${await authenticationStorage('Auth')}` } },
+      context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
     }),
 }
 

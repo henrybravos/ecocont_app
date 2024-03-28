@@ -1,88 +1,14 @@
-import { useNavigation } from '@react-navigation/core'
-import { useCallback, useState } from 'react'
 import { Platform } from 'react-native'
 import { ProgressBar, Snackbar } from 'react-native-paper'
 
 import { Block, Button, Input, Text } from '@components/index'
 
-import { AuthService } from '@core/index'
+import { useAuth } from '@screens/hooks/useAuth'
 
-import { useAppData, useTheme } from '@hooks/index'
-
-import * as regex from '@constants/regex'
+import useTheme from '@hooks/useTheme'
 
 const isAndroid = Platform.OS === 'android'
-const initAuth = {
-  email: 'henry123@gmail.com',
-  password: '123457',
-  invalidEmail: false,
-  invalidPassword: false,
-}
 
-const useAuth = () => {
-  const { client, setUserAuth } = useAppData()
-  const { navigate } = useNavigation()
-  const [authInput, setAuthInput] = useState(initAuth)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const handleSignIn = useCallback(() => {
-    setLoading(true)
-    AuthService.createToken(client, {
-      email: authInput.email,
-      password: authInput.password,
-    })
-      .then((login) => {
-        if (!login) {
-          setError('Credenciales incorrectas')
-          return
-        }
-
-        if (login.authentication === 'verify') {
-          return
-        }
-        if (login.authentication === 'expired') {
-          setError('Caducó su Tiempo Como Practicante')
-          return
-        }
-        setUserAuth({
-          auth: { ...login },
-          business: { ...login.business, locations: [login.locationBusiness] },
-          locationBusiness: login.locationBusiness,
-        })
-        setAuthInput(initAuth)
-        navigate('Home' as never)
-        setLoading(false)
-      })
-      .catch(({ message }: { message: string }) => {
-        setError(message)
-        setLoading(false)
-        setAuthInput((prev) => ({ ...prev, password: '', invalidPassword: true }))
-        console.log({ message })
-      })
-  }, [authInput.email, authInput.password])
-
-  const onChangeEmail = (value: string) => {
-    setAuthInput((prev) => ({ ...prev, email: value, invalidEmail: !regex.email.test(value) }))
-  }
-  const onChangePassword = (value: string) => {
-    setAuthInput((prev) => ({
-      ...prev,
-      password: value,
-      invalidPassword: !value,
-    }))
-  }
-  const handleClearError = useCallback(() => setError(''), [])
-  return {
-    error,
-    loading,
-    authInput,
-    onChangeEmail,
-    onChangePassword,
-    handleClearError,
-    handleSignIn,
-  }
-}
 const Login = () => {
   const theme = useTheme()
   const {
