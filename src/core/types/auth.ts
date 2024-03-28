@@ -10,3 +10,9 @@ export type AuthResponse = Auth & {
   business: Business
   locationBusiness: LocationBusiness
 }
+
+export type UserAuth = {
+  auth?: Auth
+  business?: Business
+  locationBusiness?: LocationBusiness
+}
