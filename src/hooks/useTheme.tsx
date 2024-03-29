@@ -4,7 +4,7 @@ import { ITheme, IThemeProvider, light } from '@constants/index'
 
 export const ThemeContext = React.createContext({
   theme: light,
-  setTheme: () => {},
+  setTheme: (theme: ITheme) => {},
 })
 
 export const ThemeProvider = ({ children, theme = light, setTheme = () => {} }: IThemeProvider) => {

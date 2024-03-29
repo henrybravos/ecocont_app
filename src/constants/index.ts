@@ -1,6 +1,5 @@
 export * from './regex'
 export * from './types'
 export * from './theme'
-export * from './screens'
 export * from './local-storage'
 export { THEME as light } from './light'
