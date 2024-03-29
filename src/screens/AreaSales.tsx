@@ -15,9 +15,7 @@ import { AttentionPoint, Checkout, SalesArea, UserSales } from '@core/types/user
 
 import useTheme from '@hooks/useTheme'
 
-import { SCREENS } from '@constants/screens'
-
-import { type StackNavigation } from '../navigation/Screens'
+import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 const AttentionPointComponent = ({ point }: { point: AttentionPoint }) => {
   const theme = useTheme()

@@ -6,19 +6,9 @@ import { Text, View } from 'react-native'
 
 import { AreaSales, Login, OrderSales } from '@screens/index'
 
-import { AttentionPoint } from '@core/types/user'
-
 import { useAppData, useScreenOptions } from '@hooks/index'
 
-import { SCREENS } from '@constants/screens'
-
-export type RootStackParamList = {
-  [SCREENS.HOME]: undefined
-  [SCREENS.AREA_SALES]: undefined
-  [SCREENS.ORDER_SALES]: AttentionPoint
-  [SCREENS.LOGIN]: undefined
-}
-export type StackNavigation = NavigationProp<RootStackParamList>
+import { RootStackParamList, SCREENS } from '@constants/types/navigation'
 
 const Stack = createStackNavigator<RootStackParamList>()
 

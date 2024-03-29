@@ -6,6 +6,7 @@ import { AuthService } from '@core/index'
 import { useAppData } from '@hooks/useAppData'
 
 import * as regex from '@constants/regex'
+import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 const initAuth = {
   email: 'henry123@gmail.com',
@@ -16,7 +17,7 @@ const initAuth = {
 
 export const useAuth = () => {
   const { client, setUserAuth } = useAppData()
-  const { navigate } = useNavigation()
+  const { navigate } = useNavigation<StackNavigation>()
   const [authInput, setAuthInput] = useState(initAuth)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -46,7 +47,7 @@ export const useAuth = () => {
           locationBusiness: login.locationBusiness,
         })
         setAuthInput(initAuth)
-        navigate('Home' as never)
+        navigate(SCREENS.HOME)
         setLoading(false)
       })
       .catch(({ message }: { message: string }) => {

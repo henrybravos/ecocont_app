@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import Text from '@components/Text'
 
-import { StackNavigation } from '../navigation/Screens'
+import { StackNavigation } from '@constants/types/navigation'
 
 const OrderSales = () => {
   const { getState } = useNavigation<StackNavigation>()
