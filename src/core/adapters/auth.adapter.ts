@@ -22,14 +22,10 @@ export const loginResponseFromApiAdapter = (auth: AuthResponseApi): AuthResponse
   }
 }
 
-export const loginRefreshResponseFromApiAdapter = (auth: AuthRefreshResponseApi): AuthResponse => {
-  console.log('company', auth.refresh)
+export const loginRefreshResponseFromApiAdapter = (auth: AuthRefreshResponseApi): Auth => {
   return {
-    business: businessFromApiAdapter(auth.refresh.company),
-    locationBusiness: locationBusinessFromApiAdapter(auth.refresh.local),
     authentication: auth.refresh.authentication,
     authorization: auth.refresh.authorization,
-    moduleId: auth.refresh.modulo_id,
     refreshToken: auth.refresh.refresh,
   }
 }
