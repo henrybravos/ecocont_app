@@ -104,7 +104,23 @@ declare global {
     myFixed(decimals: number): string
   }
 }
-
+export function formatNumber(number: number) {
+  return new Intl.NumberFormat('es-PE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number)
+}
+export function reduceSumMultiplyArray<T>(
+  array: T[],
+  keyToSum: keyof T,
+  keyToMultiply: keyof T,
+  initialValue?: number,
+) {
+  return array.reduce(
+    (acc, item) => acc + (item[keyToSum] as number) * (item[keyToMultiply] as number),
+    initialValue || 0,
+  )
+}
 Number.prototype.myFixed = function (decimals: number): string {
   let rounding =
     Math.round(parseFloat(this.toString()) * Math.pow(10, decimals)) / Math.pow(10, decimals)
