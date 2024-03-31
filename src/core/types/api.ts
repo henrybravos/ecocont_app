@@ -66,3 +66,112 @@ export type UserSalesResponseApi = {
 export type AttentionPointResponseApi = {
   mesas: AttentionPointApi[]
 }
+
+export type InvoiceApi = {
+  codigo: string
+  nombre: string
+  id: string
+}
+export type PersonApi = {
+  numero: string
+  razon_social: string
+  id: string
+}
+export type CurrencyApi = {
+  codigo: string
+  nombre: string
+}
+export type SalesApi = {
+  id: string
+}
+export type ProductApi = {
+  id: string
+  codigo: string
+  descripcion: string
+  codigo_sunat: string
+  tipo_igv: string
+  medida: {
+    id: string
+    codigo: string
+    nombre: string
+  }
+  pcgeVenta: {
+    id: string
+    code: string
+    name: string
+  }
+}
+export type MovementOrderApi = {
+  id: string
+  cantidad: number
+  costo_unitario: number
+  igv: number
+  precio_unitario: number
+  icbper: number
+  producto_id: string
+  t_facturacion: {
+    codigo: string
+  }
+  producto: ProductApi
+  precio: {
+    id: string
+    nombre: string
+  }
+}
+export type OrderSalesApi = {
+  id: string
+  fecha_emision: string
+  comprobante: InvoiceApi
+  serie: string
+  correlativo: string
+  persona_asociado_id: string
+  persona: PersonApi
+  moneda: CurrencyApi
+  glosa: string
+  venta: SalesApi
+  movimientos: MovementOrderApi[]
+}
+
+export type OrderSalesResponseApi = {
+  pedido: OrderSalesApi
+}
+
+export type ProductTopResponseApi = {
+  productosTop: {
+    id: string
+    codigo: string
+    is_combo: boolean
+    descripcion: string
+    precio_unitario: number
+    valor_unitario: number
+    icbper: boolean
+    codigo_sunat: string
+    medida: {
+      id: string
+      codigo: string
+      nombre: string
+    }
+    precios: {
+      id: string
+      nombre: string
+      precio: number
+      total_parcial: number
+      total_general: number
+      imagen: string
+    }[]
+    tIGV: {
+      id: string
+      codigo: string
+      descripcion: string
+    }
+    imagen: string
+    tipo_igv: string
+    pcgeVenta: {
+      id: string
+      code: string
+      name: string
+    }
+    stock: number
+    codigo_barras: string
+  }[]
+}
