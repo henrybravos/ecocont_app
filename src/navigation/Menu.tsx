@@ -12,6 +12,8 @@ import { Block, Button, Image, Switch, Text } from '@components/index'
 
 import { useAppData, useTheme } from '@hooks/index'
 
+import { SCREENS } from '@constants/types/navigation'
+
 import Screens from './Screens'
 
 const Drawer = createDrawerNavigator()
@@ -79,7 +81,19 @@ const DrawerContentCustom = (props: DrawerContentComponentProps) => {
     },
     [navigation],
   )
-  const screens = [{ name: 'Home', to: 'Home', icon: icons.home }]
+  const screens = [
+    { name: SCREENS.HOME, to: SCREENS.HOME, icon: icons.home },
+    {
+      name: 'Zonas',
+      to: SCREENS.AREA_SALES,
+      icon: icons.home,
+    },
+    {
+      name: 'Pedidos',
+      to: SCREENS.ORDER_SALES,
+      icon: icons.home,
+    },
+  ]
 
   const handleCloseSession = useCallback(() => {
     handleClearUserAuth()
