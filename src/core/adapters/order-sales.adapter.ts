@@ -37,6 +37,10 @@ export const movementOrderAdapter = (movement: MovementOrderApi): MovementOrder 
     productId: movement.producto_id,
     unitCost: movement.costo_unitario,
     unitPrice: movement.precio_unitario,
+    priceDetail: {
+      id: movement.precio.id,
+      name: movement.precio.nombre,
+    },
     quantity: movement.cantidad,
     invoiceType: {
       code: movement.t_facturacion.codigo,

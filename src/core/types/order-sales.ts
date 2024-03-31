@@ -26,6 +26,10 @@ export type MovementOrder = {
   invoiceType: {
     code: string
   }
+  priceDetail: {
+    id: string
+    name: string
+  }
   product: Partial<Product>
 }
 export type OrderSales = {

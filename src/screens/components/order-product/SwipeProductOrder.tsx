@@ -9,7 +9,13 @@ import { MovementOrder } from '@core/types/order-sales'
 
 import { formatNumber } from '@utils/scripts'
 
-const SwipeProductOrder = ({ item, currency }: { item: MovementOrder; currency: string }) => {
+const SwipeProductOrder = ({
+  item,
+  currency,
+}: {
+  item: Partial<MovementOrder>
+  currency: string
+}) => {
   const [openDetail, setOpenDetail] = useState(false)
   const renderRightActions = () => {
     return (
@@ -39,6 +45,10 @@ const SwipeProductOrder = ({ item, currency }: { item: MovementOrder; currency: 
     )
   }
   const toggleOpenDetail = () => setOpenDetail((prev) => !prev)
+  const labelDescription =
+    item.priceDetail?.name === item.product?.description
+      ? item.product?.description
+      : `${item.priceDetail?.name} - ${item.product?.description}`
   return (
     <Block>
       <Swipeable renderRightActions={renderRightActions}>
@@ -52,15 +62,15 @@ const SwipeProductOrder = ({ item, currency }: { item: MovementOrder; currency: 
           >
             <Block flex={1} paddingHorizontal={4}>
               <Text align="justify" numberOfLines={openDetail ? undefined : 1}>
-                {item.product.description}
+                {labelDescription}
               </Text>
               <Text color="#5c84ff">
-                {item.quantity} x {item.unitPrice}
+                {item.quantity} x {formatNumber(item.unitPrice || 0)}
               </Text>
             </Block>
             <Block flex={0} align="flex-end" justify="center" paddingHorizontal={8}>
               <Text bold h5>
-                {formatNumber(item.unitPrice * item.quantity)}
+                {formatNumber((item.unitPrice || 0) * (item.quantity || 0))}
               </Text>
               <Text color="#5c84ff" size={9} bold>
                 {currency}

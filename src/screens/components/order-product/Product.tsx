@@ -15,7 +15,7 @@ const ProductComponent = ({ p, scrollEnabled }: { p: Product; scrollEnabled: boo
   const width = `${percentage > 100 ? 100 : percentage}%` as DimensionValue
   const numVariants = p.variants.length
   const renderProduct = ({ item }: { item: Product['variants'][0] }) => (
-    <ProductVariantComponent item={item} />
+    <ProductVariantComponent item={item} product={p} />
   )
   return (
     <View key={p.id} style={{ width }}>

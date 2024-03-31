@@ -4,20 +4,18 @@ import { Animated, Dimensions, PanResponder, Platform, StyleSheet, View } from '
 const WINDOW_HEIGHT = Dimensions.get('window').height
 const WINDOW_WIDTH = Dimensions.get('window').width
 
-const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.6
-const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.085
+const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.8
+export const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.065
 const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0
 const DRAG_THRESHOLD = 50
 type DraggableBottomPanResponderProps = {
   children?: React.ReactNode
-  callbackStartPan: () => void
-  callbackReleasePan: () => void
+  callbackOpen: (isOpen: boolean) => void
 }
 const DraggableBottomPanResponder = ({
   children,
-  callbackReleasePan,
-  callbackStartPan,
+  callbackOpen,
 }: DraggableBottomPanResponderProps) => {
   const animatedValue = useRef(new Animated.Value(0)).current
   const lastGestureDy = useRef(0)
@@ -36,7 +34,6 @@ const DraggableBottomPanResponder = ({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => {
-        callbackStartPan()
         return true
       },
       onPanResponderGrant: () => {
@@ -48,7 +45,6 @@ const DraggableBottomPanResponder = ({
       onPanResponderRelease: (e, gesture) => {
         animatedValue.flattenOffset()
         lastGestureDy.current += gesture.dy
-        callbackReleasePan()
         if (gesture.dy > 0) {
           if (gesture.dy <= DRAG_THRESHOLD) {
             springAnimation('up')
@@ -67,6 +63,7 @@ const DraggableBottomPanResponder = ({
   ).current
   const springAnimation = (direction: 'up' | 'down') => {
     lastGestureDy.current = direction === 'down' ? MAX_DOWNWARD_TRANSLATE_Y : MAX_UPWARD_TRANSLATE_Y
+    callbackOpen(direction === 'up')
     Animated.spring(animatedValue, {
       toValue: lastGestureDy.current,
       useNativeDriver: true,
