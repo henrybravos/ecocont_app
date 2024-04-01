@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/core'
-import { NavigationProp } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { Fragment, useEffect } from 'react'
 import { Text, View } from 'react-native'
@@ -15,7 +14,7 @@ const Stack = createStackNavigator<RootStackParamList>()
 const Home = () => {
   return (
     <View>
-      <Text>Inicio</Text>
+      <Text>Falta control de roles, por favor navegue por el menú</Text>
     </View>
   )
 }
