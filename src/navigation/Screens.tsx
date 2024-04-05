@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator } from '@react-navigation/stack'
-import React, { Fragment, useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Text, View } from 'react-native'
 
 import { AreaSales, Login, OrderSales } from '@screens/index'
