@@ -1,12 +1,13 @@
 import { MotiView } from 'moti'
-import { FlatList } from 'react-native'
+import { FlatList, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 import { Button, Divider } from 'react-native-paper'
 
 import Block from '@components/Block'
 import DraggableBottomPanResponder from '@components/DraggableBottomPanResponder'
 import Text from '@components/Text'
+import { AnimatedText } from '@components/animated'
 
-import QuantityItems from '@screens/components/order-product/QuantityItems'
 import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrder'
 import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
@@ -21,22 +22,22 @@ const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
 
   const renderProduct = (currency: string) => (row: RenderProduct) => (
-    <SwipeProductOrder item={row.item} currency={currency} />
+    <SwipeProductOrder key={row.item.id} item={row.item} currency={currency} />
   )
   return (
     <DraggableBottomPanResponder callbackOpen={ctx.callbackOpenCart}>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
         <Block row flex={0} paddingBottom={8} paddingHorizontal={4}>
-          <Block flex={1}>
-            <QuantityItems quantity={ctx.productOrders.length || 0} />
+          <Block row flex={1}>
+            <Text bold>( </Text>
+            <AnimatedText label={`${ctx.productOrders.length || 0}`} />
+            <Text bold> ) en lista</Text>
           </Block>
           <Block flex={0} align="flex-end">
             <Text size={9} bold color="#5c84ff" position="absolute" top={-12}>
               {ctx.order?.currency?.name}
             </Text>
-            <Text bold h5>
-              {formatNumber(ctx.totalOrder)}
-            </Text>
+            <AnimatedText label={formatNumber(ctx.totalOrder)} />
           </Block>
           {ctx.isDisplayButtonConfirm && (
             <MotiView from={{ translateX: 100 }} animate={{ translateX: 0 }}>
@@ -60,12 +61,12 @@ const OrderDraggableBottom = () => {
         </Block>
         <Divider bold />
         <Divider bold />
-        <Block flex={1} center justify="center">
-          <FlatList
-            data={ctx.productOrders || []}
-            contentContainerStyle={{ marginVertical: 4 }}
-            renderItem={renderProduct(ctx.order?.currency?.name || '')}
-          />
+        <Block flex={1}>
+          <ScrollView>
+            {ctx.productOrders.map((p) =>
+              renderProduct(ctx.order?.currency?.name || '')({ item: p }),
+            )}
+          </ScrollView>
         </Block>
       </Block>
     </DraggableBottomPanResponder>
