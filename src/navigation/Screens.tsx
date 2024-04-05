@@ -31,7 +31,7 @@ export default () => {
           <Stack.Screen
             name={SCREENS.ORDER_SALES}
             component={OrderSales}
-            options={{ title: 'Pedidos' }}
+            options={{ title: 'Pedidos', headerShown: false }}
           />
           <Stack.Screen
             name={SCREENS.AREA_SALES}

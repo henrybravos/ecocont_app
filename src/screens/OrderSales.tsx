@@ -1,5 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
 import { ScrollView, StyleSheet, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
 import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder'
@@ -51,9 +53,12 @@ const OrderSalesScreen = () => {
   const state = getState()
   const pointParam = state.routes[state.index].params || pointDefault
   return (
-    <OrderSalesProvider point={pointParam}>
-      <OrderSalesManagement />
-    </OrderSalesProvider>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar style="dark" />
+      <OrderSalesProvider point={pointParam}>
+        <OrderSalesManagement />
+      </OrderSalesProvider>
+    </SafeAreaView>
   )
 }
 export default OrderSalesScreen
