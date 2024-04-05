@@ -1,20 +1,20 @@
 import { MotiView } from 'moti'
 import { useEffect, useState } from 'react'
 
-import Block from '@components/Block'
 import Text from '@components/Text'
 
-const QuantityItems = ({ quantity = 0 }: { quantity: number }) => {
+type AnimatedLabelProps = {
+  label: string
+  timeout?: number
+}
+const AnimatedText = ({ timeout = 100, label }: AnimatedLabelProps) => {
   const [animated, setAnimated] = useState(true)
   useEffect(() => {
     setAnimated(false)
-    setTimeout(() => setAnimated(true), 100)
-  }, [quantity])
+    setTimeout(() => setAnimated(true), timeout)
+  }, [label])
   return (
-    <Block row>
-      <Text bold h5>
-        (
-      </Text>
+    <>
       {animated && (
         <MotiView
           from={{
@@ -26,15 +26,10 @@ const QuantityItems = ({ quantity = 0 }: { quantity: number }) => {
             scale: 1,
           }}
         >
-          <Text bold h5>
-            {quantity}
-          </Text>
+          <Text bold>{label}</Text>
         </MotiView>
       )}
-      <Text bold h5>
-        ) en lista
-      </Text>
-    </Block>
+    </>
   )
 }
-export default QuantityItems
+export default AnimatedText
