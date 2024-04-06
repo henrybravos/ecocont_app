@@ -6,32 +6,36 @@ import { MovementOrder, OrderSales } from '@core/types/order-sales'
 import { Product } from '@core/types/product'
 import { AttentionPoint } from '@core/types/user'
 
+import fetchApi from '@hooks/useFetchApi'
+
 import { reduceSumMultiplyArray } from '@utils/scripts'
 
 const useOrderSales = (point: AttentionPoint) => {
-  const [products, setProducts] = useState<Product[]>([])
+  const [isLoadingProducts, products, fetchProductsFavorites] = fetchApi(
+    ProductService.getProductsFavorite,
+  )
+  const [isLoadingOrderSales, orderSales, fetchOrderSales] = fetchApi(
+    OrderSalesService.getDetailUserActive,
+  )
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [isOpenOrderCart, setIsOpenOrder] = useState(false)
   const [order, setOrder] = useState<Partial<OrderSales> | null>({
     id: point.orderId,
   })
   useEffect(() => {
-    if (point.orderId) fetchOrderDetails(point.orderId)
+    if (point.orderId) fetchOrderSales({ orderId: point.orderId })
     if (point.id) fetchProductsFavorites()
   }, [point.orderId])
 
+  useEffect(() => {
+    if (orderSales) {
+      setOrder(orderSales)
+      const movementsCopy = orderSales.movementOrder?.map((m) => ({ ...m })) || []
+      setProductOrders(movementsCopy)
+    }
+  }, [orderSales])
   if (!point.id) return
 
-  const fetchOrderDetails = (orderId: string) => {
-    OrderSalesService.getDetailUserActive(orderId).then((data) => {
-      setOrder(data)
-      const copiedMovementOrder = data.movementOrder.map((order) => ({ ...order }))
-      setProductOrders(copiedMovementOrder)
-    })
-  }
-  const fetchProductsFavorites = () => {
-    ProductService.getProductsFavorite().then((productsTop) => setProducts(productsTop))
-  }
   const totalOrder = useMemo(
     () => reduceSumMultiplyArray(productOrders || [], 'unitPrice', 'quantity', 0),
     [productOrders],
@@ -94,6 +98,8 @@ const useOrderSales = (point: AttentionPoint) => {
   }, [order?.movementOrder, productOrders])
   const callbackOpenCart = (status: boolean) => setIsOpenOrder(status)
   return {
+    isLoadingProducts,
+    isLoadingOrderSales,
     point,
     products,
     order,

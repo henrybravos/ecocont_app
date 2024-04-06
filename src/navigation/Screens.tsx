@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
-import { NavigationProp } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import React, { Fragment, useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Text, View } from 'react-native'
 
 import { AreaSales, Login, OrderSales } from '@screens/index'
@@ -15,7 +14,7 @@ const Stack = createStackNavigator<RootStackParamList>()
 const Home = () => {
   return (
     <View>
-      <Text>Inicio</Text>
+      <Text>Falta control de roles, por favor navegue por el menú</Text>
     </View>
   )
 }
@@ -32,7 +31,7 @@ export default () => {
           <Stack.Screen
             name={SCREENS.ORDER_SALES}
             component={OrderSales}
-            options={{ title: 'Pedidos' }}
+            options={{ title: 'Pedidos', headerShown: false }}
           />
           <Stack.Screen
             name={SCREENS.AREA_SALES}

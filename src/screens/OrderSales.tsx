@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
 import { ScrollView, StyleSheet, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
 import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder'
 
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
 import ProductComponent from '@screens/components/order-product/Product'
+import SkeletonProducts from '@screens/components/order-product/SkeletonProducts'
 import OrderSalesProvider, { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
 import { StackNavigation } from '@constants/types/navigation'
@@ -34,9 +37,13 @@ const OrderSalesManagement = () => {
   return (
     <Block>
       <Block>
-        <ScrollView>
-          <OrderSalesProductList />
-        </ScrollView>
+        {ctx.isLoadingProducts ? (
+          <SkeletonProducts />
+        ) : (
+          <ScrollView>
+            <OrderSalesProductList />
+          </ScrollView>
+        )}
       </Block>
       {ctx.isOpenOrderCart && <View style={styles.overlay} />}
       <Block flex={0} height={BOTTOM_SHEET_MIN_HEIGHT} style={styles.transparent} />
@@ -51,9 +58,12 @@ const OrderSalesScreen = () => {
   const state = getState()
   const pointParam = state.routes[state.index].params || pointDefault
   return (
-    <OrderSalesProvider point={pointParam}>
-      <OrderSalesManagement />
-    </OrderSalesProvider>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar style="dark" />
+      <OrderSalesProvider point={pointParam}>
+        <OrderSalesManagement />
+      </OrderSalesProvider>
+    </SafeAreaView>
   )
 }
 export default OrderSalesScreen
