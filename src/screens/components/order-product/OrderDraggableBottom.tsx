@@ -1,7 +1,6 @@
 import { MotiView } from 'moti'
-import { FlatList, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { Button, Divider } from 'react-native-paper'
+import { Button, Divider, ProgressBar } from 'react-native-paper'
 
 import Block from '@components/Block'
 import DraggableBottomPanResponder from '@components/DraggableBottomPanResponder'
@@ -11,22 +10,15 @@ import { AnimatedText } from '@components/animated'
 import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrder'
 import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
-import { MovementOrder } from '@core/types/order-sales'
-
 import { formatNumber } from '@utils/scripts'
 
-type RenderProduct = {
-  item: Partial<MovementOrder>
-}
 const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
 
-  const renderProduct = (currency: string) => (row: RenderProduct) => (
-    <SwipeProductOrder key={row.item.id} item={row.item} currency={currency} />
-  )
   return (
     <DraggableBottomPanResponder callbackOpen={ctx.callbackOpenCart}>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
+        {ctx.isLoadingOrderSales && <ProgressBar indeterminate />}
         <Block row flex={0} paddingBottom={8} paddingHorizontal={4}>
           <Block row flex={1}>
             <Text bold>( </Text>
@@ -63,9 +55,13 @@ const OrderDraggableBottom = () => {
         <Divider bold />
         <Block flex={1}>
           <ScrollView>
-            {ctx.productOrders.map((p) =>
-              renderProduct(ctx.order?.currency?.name || '')({ item: p }),
-            )}
+            {ctx.productOrders.map((p) => (
+              <SwipeProductOrder
+                key={p.priceDetail?.id}
+                item={p}
+                currency={ctx.order?.currency?.name || ''}
+              />
+            ))}
           </ScrollView>
         </Block>
       </Block>

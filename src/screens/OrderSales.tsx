@@ -8,6 +8,7 @@ import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder
 
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
 import ProductComponent from '@screens/components/order-product/Product'
+import SkeletonProducts from '@screens/components/order-product/SkeletonProducts'
 import OrderSalesProvider, { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
 import { StackNavigation } from '@constants/types/navigation'
@@ -36,9 +37,13 @@ const OrderSalesManagement = () => {
   return (
     <Block>
       <Block>
-        <ScrollView>
-          <OrderSalesProductList />
-        </ScrollView>
+        {ctx.isLoadingProducts ? (
+          <SkeletonProducts />
+        ) : (
+          <ScrollView>
+            <OrderSalesProductList />
+          </ScrollView>
+        )}
       </Block>
       {ctx.isOpenOrderCart && <View style={styles.overlay} />}
       <Block flex={0} height={BOTTOM_SHEET_MIN_HEIGHT} style={styles.transparent} />

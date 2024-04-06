@@ -14,7 +14,7 @@ import { Product } from '@core/types/product'
 
 import { formatNumber } from '@utils/scripts'
 
-const ITEM_WIDTH_MAX = Dimensions.get('window').width / 3 - 8
+export const ITEM_PRODUCT_WIDTH_MAX = Dimensions.get('window').width / 3 - 8
 
 const getImageProduct = (uri: string | undefined) => {
   return uri
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   itemProductContainer: {
-    width: ITEM_WIDTH_MAX - 2,
+    width: ITEM_PRODUCT_WIDTH_MAX - 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#efefef',
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   itemProductPrice: {
-    width: ITEM_WIDTH_MAX - 48,
-    height: ITEM_WIDTH_MAX - 48,
+    width: ITEM_PRODUCT_WIDTH_MAX - 48,
+    height: ITEM_PRODUCT_WIDTH_MAX - 48,
     resizeMode: 'cover',
   },
   itemProductHeader: {
