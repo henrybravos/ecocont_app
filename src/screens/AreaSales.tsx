@@ -1,4 +1,4 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { StyleSheet, TouchableHighlight } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
@@ -6,7 +6,6 @@ import { Icon } from 'react-native-paper'
 
 import Block from '@components/Block'
 import EmptyComponent from '@components/EmptyComponent'
-import SkeletonAttentionPoints from '@components/SkeletonAttentionPoints'
 import Text from '@components/Text'
 import { DropdownList } from '@components/paper'
 
@@ -16,6 +15,8 @@ import { AttentionPoint, Checkout, SalesArea, UserSales } from '@core/types/user
 import useTheme from '@hooks/useTheme'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
+
+import SkeletonAttentionPoints from './components/attention-points/SkeletonAttentionPoints'
 
 const AttentionPointComponent = ({ point }: { point: AttentionPoint }) => {
   const theme = useTheme()
