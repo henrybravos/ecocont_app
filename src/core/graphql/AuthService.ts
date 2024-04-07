@@ -2,6 +2,8 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
 import gql from 'graphql-tag'
 
+import client from '@utils/apollo'
+
 import { getAuthenticationStorage } from '../../utils/scripts'
 import { loginResponseFromApiAdapter } from '../adapters/auth.adapter'
 import { AuthRefreshResponseApi, AuthResponseApi } from '../types'
@@ -12,7 +14,7 @@ type LoginParams = {
 }
 
 const AuthService = {
-  createToken: (client: ApolloClient<NormalizedCacheObject>, login: LoginParams) =>
+  createToken: (login: LoginParams) =>
     client
       .query<AuthResponseApi>({
         query: gql`
@@ -46,7 +48,7 @@ const AuthService = {
         if (!response.data.login) throw new Error('Credenciales incorrectas')
         return loginResponseFromApiAdapter(response.data)
       }),
-  refreshToken: async (client: ApolloClient<NormalizedCacheObject>, authentication: string) =>
+  refreshToken: async ({ authentication }: { authentication: string }) =>
     client.query<AuthRefreshResponseApi>({
       query: gql`
         query refreshToken($refresh: String!) {

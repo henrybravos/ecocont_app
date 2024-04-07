@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { AuthService } from '@core/index'
 
+import { useFetchApi } from '@hooks/index'
 import { useAppData } from '@hooks/useAppData'
 
 import * as regex from '@constants/regex'
@@ -16,46 +17,38 @@ const initAuth = {
 }
 
 export const useAuth = () => {
-  const { client, setUserAuth } = useAppData()
+  const { setUserAuth, userAuth } = useAppData()
   const { navigate } = useNavigation<StackNavigation>()
   const [authInput, setAuthInput] = useState(initAuth)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loadingSignIn, authResponse, fetchLogin, errorSignIn, resetData] = useFetchApi(
+    AuthService.createToken,
+  )
+  useEffect(() => {
+    if (userAuth?.auth?.authentication) {
+      navigateToHome()
+    }
+  }, [userAuth])
+  useEffect(() => {
+    if (authResponse) {
+      setUserAuth({
+        auth: { ...authResponse },
+        business: { ...authResponse.business, locations: [authResponse.locationBusiness] },
+        locationBusiness: authResponse.locationBusiness,
+      })
+      setAuthInput(initAuth)
+    }
+    if (errorSignIn) {
+      setAuthInput((prev) => ({ ...prev, password: '', invalidPassword: true }))
+    }
+  }, [authResponse])
 
+  const navigateToHome = () => {
+    setTimeout(() => {
+      navigate(SCREENS.HOME)
+    }, 500)
+  }
   const handleSignIn = useCallback(() => {
-    setLoading(true)
-    AuthService.createToken(client, {
-      email: authInput.email,
-      password: authInput.password,
-    })
-      .then((login) => {
-        if (!login) {
-          setError('Credenciales incorrectas')
-          return
-        }
-
-        if (login.authentication === 'verify') {
-          return
-        }
-        if (login.authentication === 'expired') {
-          setError('Caducó su Tiempo Como Practicante')
-          return
-        }
-        setUserAuth({
-          auth: { ...login },
-          business: { ...login.business, locations: [login.locationBusiness] },
-          locationBusiness: login.locationBusiness,
-        })
-        setAuthInput(initAuth)
-        navigate(SCREENS.HOME)
-        setLoading(false)
-      })
-      .catch(({ message }: { message: string }) => {
-        setError(message)
-        setLoading(false)
-        setAuthInput((prev) => ({ ...prev, password: '', invalidPassword: true }))
-        console.log({ message })
-      })
+    fetchLogin(authInput)
   }, [authInput.email, authInput.password])
 
   const onChangeEmail = (value: string) => {
@@ -68,14 +61,14 @@ export const useAuth = () => {
       invalidPassword: !value,
     }))
   }
-  const handleClearError = useCallback(() => setError(''), [])
   return {
-    error,
-    loading,
     authInput,
+    resetData,
+    errorSignIn,
+    handleSignIn,
+    loadingSignIn,
+
     onChangeEmail,
     onChangePassword,
-    handleClearError,
-    handleSignIn,
   }
 }

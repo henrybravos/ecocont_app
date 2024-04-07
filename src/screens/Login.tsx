@@ -13,11 +13,11 @@ const Login = () => {
   const theme = useTheme()
   const {
     authInput,
-    loading,
-    error,
+    loadingSignIn,
+    errorSignIn,
     onChangeEmail,
     onChangePassword,
-    handleClearError,
+    resetData,
     handleSignIn,
   } = useAuth()
   return (
@@ -72,7 +72,7 @@ const Login = () => {
                 marginVertical={theme.sizes.s}
                 marginHorizontal={theme.sizes.sm}
                 gradient={theme.gradients.primary}
-                disabled={authInput.invalidEmail || authInput.invalidPassword || loading}
+                disabled={authInput.invalidEmail || authInput.invalidPassword || loadingSignIn}
               >
                 <Text bold white transform="uppercase">
                   Ingresar
@@ -82,10 +82,10 @@ const Login = () => {
           </Block>
         </Block>
       </Block>
-      <Snackbar onDismiss={handleClearError} visible={!!error} duration={5000}>
-        {error}
+      <Snackbar onDismiss={resetData} visible={!!errorSignIn} duration={5000}>
+        {errorSignIn}
       </Snackbar>
-      <ProgressBar indeterminate color={theme.colors.primary as string} visible={loading} />
+      <ProgressBar indeterminate color={theme.colors.primary as string} visible={loadingSignIn} />
     </Block>
   )
 }

@@ -53,7 +53,7 @@ const UserSalesService = {
       .then((response) => {
         return salesActiveUserResponseAdapter(response.data)
       }),
-  getAttentionPoints: async (areaId: string) =>
+  getAttentionPoints: async ({ areaId }: { areaId: string }) =>
     client
       .query<AttentionPointResponseApi>({
         query: gql`

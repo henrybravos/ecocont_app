@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { StyleSheet, TouchableHighlight } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
-import { Icon } from 'react-native-paper'
+import { Icon, ProgressBar } from 'react-native-paper'
 
 import Block from '@components/Block'
 import EmptyComponent from '@components/EmptyComponent'
@@ -12,6 +12,7 @@ import { DropdownList } from '@components/paper'
 import UserSalesService from '@core/graphql/UserSalesService'
 import { AttentionPoint, Checkout, SalesArea, UserSales } from '@core/types/user'
 
+import { useFetchApi } from '@hooks/index'
 import useTheme from '@hooks/useTheme'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
@@ -20,12 +21,12 @@ import SkeletonAttentionPoints from './components/attention-points/SkeletonAtten
 
 const AttentionPointComponent = ({ point }: { point: AttentionPoint }) => {
   const theme = useTheme()
-  const { navigate } = useNavigation<StackNavigation>()
+  const navigation = useNavigation<StackNavigation>()
   const isOccupied = !!point.orderId
   const styleStatus = isOccupied ? styles.pointOccupied : styles.pointAvailable
   const icon = !isOccupied ? 'circle-outline' : 'circle-slice-8'
   const navigateToOrder = () => {
-    navigate(SCREENS.ORDER_SALES, point)
+    navigation.navigate(SCREENS.ORDER_SALES, point)
   }
   return (
     <TouchableHighlight
@@ -51,14 +52,16 @@ const AttentionPointComponent = ({ point }: { point: AttentionPoint }) => {
   )
 }
 const AreaSales = () => {
-  const [userSales, setUserSales] = useState<UserSales | null>(null)
   const [checkoutSelected, setCheckoutSelected] = useState<Checkout | null>(null)
   const [areaSelected, setAreaSelected] = useState<SalesArea | null>(null)
-  const [attentionPoints, setAttentionPoints] = useState<AttentionPoint[]>([])
-  const [loading, setLoading] = useState(true)
-
+  const [isLoadingPoints, attentionPoints, fetchAttentionPoints] = useFetchApi(
+    UserSalesService.getAttentionPoints,
+  )
+  const [isLoadingUser, userSales, fetchUserDetail] = useFetchApi(
+    UserSalesService.getDetailUserActive,
+  )
   useEffect(() => {
-    fetchUserSales()
+    fetchUserDetail()
   }, [])
 
   useEffect(() => {
@@ -78,27 +81,11 @@ const AreaSales = () => {
 
   useEffect(() => {
     if (areaSelected && areaSelected.id) {
-      fetchAttentionSales(areaSelected.id)
+      fetchAttentionPoints({
+        areaId: areaSelected.id,
+      })
     }
   }, [areaSelected])
-
-  const fetchUserSales = async () => {
-    setLoading(true)
-    const userSales = await UserSalesService.getDetailUserActive()
-    if (userSales) {
-      setUserSales(userSales)
-    }
-    setLoading(false)
-  }
-
-  const fetchAttentionSales = async (areaId: string) => {
-    setLoading(true)
-    const points = await UserSalesService.getAttentionPoints(areaId)
-    if (points) {
-      setAttentionPoints(points)
-    }
-    setLoading(false)
-  }
 
   const handleCheckoutSelected = (checkout: Checkout | null) => {
     setCheckoutSelected(checkout)
@@ -112,9 +99,11 @@ const AreaSales = () => {
   const checkouts = userSales?.checkouts || []
   const isCashier = !!userSales?.areas.length
   const areas = isCashier ? userSales?.areas || [] : checkoutSelected?.areas || []
+  const isLoading = isLoadingUser || isLoadingPoints
   return (
     <Block marginVertical={4} justify="flex-start">
       <Block row flex={0} marginVertical={4}>
+        {isLoading && <ProgressBar indeterminate visible={isLoading} />}
         {checkouts.length > 0 && (
           <Block>
             <DropdownList
@@ -141,7 +130,7 @@ const AreaSales = () => {
           </Block>
         )}
       </Block>
-      {!loading ? (
+      {!isLoading ? (
         <FlatList
           data={attentionPoints || []}
           columnWrapperStyle={styles.listAttention}
