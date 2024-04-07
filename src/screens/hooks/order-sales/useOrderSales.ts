@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import OrderSalesService from '@core/graphql/OrderSalesService'
 import ProductService from '@core/graphql/ProductService'
-import { MovementOrder, OrderSales } from '@core/types/order-sales'
+import { MovementOrder } from '@core/types/order-sales'
 import { Product } from '@core/types/product'
 import { AttentionPoint } from '@core/types/user'
 
@@ -11,29 +11,38 @@ import fetchApi from '@hooks/useFetchApi'
 import { reduceSumMultiplyArray } from '@utils/scripts'
 
 const useOrderSales = (point: AttentionPoint) => {
-  const [isLoadingProducts, products, fetchProductsFavorites] = fetchApi(
-    ProductService.getProductsFavorite,
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoadingProductsTop, productsTop, fetchProductsTop] = fetchApi(
+    ProductService.getTopProducts,
   )
-  const [isLoadingOrderSales, orderSales, fetchOrderSales] = fetchApi(
-    OrderSalesService.getDetailUserActive,
+  const [isLoadingProductsSearch, productsSearch, fetchProductsSearch] = fetchApi(
+    ProductService.getSearchProducts,
   )
+  const [isLoadingOrderSales, order, fetchOrder] = fetchApi(OrderSalesService.getDetailUserActive)
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [isOpenOrderCart, setIsOpenOrder] = useState(false)
-  const [order, setOrder] = useState<Partial<OrderSales> | null>({
-    id: point.orderId,
-  })
+
   useEffect(() => {
-    if (point.orderId) fetchOrderSales({ orderId: point.orderId })
-    if (point.id) fetchProductsFavorites()
+    if (point.orderId) fetchOrder({ orderId: point.orderId })
+    if (point.id) fetchProductsTop()
   }, [point.orderId])
 
   useEffect(() => {
-    if (orderSales) {
-      setOrder(orderSales)
-      const movementsCopy = orderSales.movementOrder?.map((m) => ({ ...m })) || []
+    if (productsTop) {
+      setProducts(productsTop)
+    }
+  }, [productsTop])
+  useEffect(() => {
+    if (productsSearch) {
+      setProducts(productsSearch)
+    }
+  }, [productsSearch])
+  useEffect(() => {
+    if (order) {
+      const movementsCopy = order.movementOrder?.map((m) => ({ ...m })) || []
       setProductOrders(movementsCopy)
     }
-  }, [orderSales])
+  }, [order])
   if (!point.id) return
 
   const totalOrder = useMemo(
@@ -45,6 +54,16 @@ const useOrderSales = (point: AttentionPoint) => {
       return productOrders?.find((m) => m.priceDetail?.id === productId)
     },
     [productOrders],
+  )
+  const handleSearchProductApi = useCallback(
+    (search: string) => {
+      if (search.trim().length === 0) {
+        setProducts(productsTop)
+      } else {
+        fetchProductsSearch({ search })
+      }
+    },
+    [fetchProductsSearch, productsTop],
   )
   const handleRemoveProductFromCart = useCallback(
     (productVariantId: string, quantityDecrease: number) => {
@@ -98,18 +117,19 @@ const useOrderSales = (point: AttentionPoint) => {
   }, [order?.movementOrder, productOrders])
   const callbackOpenCart = (status: boolean) => setIsOpenOrder(status)
   return {
-    isLoadingProducts,
+    isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch,
+    isOpenOrderCart,
     isLoadingOrderSales,
+    isDisplayButtonConfirm,
+    order,
     point,
     products,
-    order,
-    isOpenOrderCart,
     totalOrder,
     productOrders,
-    isDisplayButtonConfirm,
 
     callbackOpenCart,
     handleExistInCart,
+    handleSearchProductApi,
     handleUpdateProductToCart,
     handleRemoveProductFromCart,
   }

@@ -135,43 +135,46 @@ export type OrderSalesApi = {
 export type OrderSalesResponseApi = {
   pedido: OrderSalesApi
 }
-
-export type ProductTopResponseApi = {
-  productosTop: {
+export type ProductResponseApi = {
+  id: string
+  codigo: string
+  is_combo: boolean
+  descripcion: string
+  precio_unitario: number
+  valor_unitario: number
+  icbper: boolean
+  codigo_sunat: string
+  medida: {
     id: string
     codigo: string
-    is_combo: boolean
-    descripcion: string
-    precio_unitario: number
-    valor_unitario: number
-    icbper: boolean
-    codigo_sunat: string
-    medida: {
-      id: string
-      codigo: string
-      nombre: string
-    }
-    precios: {
-      id: string
-      nombre: string
-      precio: number
-      total_parcial: number
-      total_general: number
-      imagen: string
-    }[]
-    tIGV: {
-      id: string
-      codigo: string
-      descripcion: string
-    }
+    nombre: string
+  }
+  precios: {
+    id: string
+    nombre: string
+    precio: number
+    total_parcial: number
+    total_general: number
     imagen: string
-    tipo_igv: string
-    pcgeVenta: {
-      id: string
-      code: string
-      name: string
-    }
-    stock: number
-    codigo_barras: string
   }[]
+  tIGV: {
+    id: string
+    codigo: string
+    descripcion: string
+  }
+  imagen: string
+  tipo_igv: string
+  pcgeVenta: {
+    id: string
+    code: string
+    name: string
+  }
+  stock: number
+  codigo_barras: string
+}
+export type ProductTopResponseApi = {
+  productosTop: ProductResponseApi[]
+}
+export type ProductSearchResponseApi = {
+  productosbyParam: ProductResponseApi[]
 }

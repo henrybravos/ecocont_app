@@ -1,10 +1,13 @@
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
+import { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
 import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder'
+import EmptyComponent from '@components/EmptyComponent'
+import SearchBarComponent from '@components/paper/SearchBar'
 
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
 import ProductComponent from '@screens/components/order-product/Product'
@@ -32,13 +35,31 @@ const OrderSalesProductList = () => {
     </View>
   )
 }
+const SearchBar = () => {
+  const ctx = useOrderSalesContext()
+  const [searchQuery, setSearchQuery] = useState('')
+  const onConfirmSearch = (text: string) => {
+    ctx.handleSearchProductApi(text)
+  }
+  const onChangeText = (text: string) => setSearchQuery(text)
+  return (
+    <SearchBarComponent
+      value={searchQuery}
+      onChangeText={onChangeText}
+      onConfirmSearch={onConfirmSearch}
+    />
+  )
+}
 const OrderSalesManagement = () => {
   const ctx = useOrderSalesContext()
   return (
     <Block>
+      <SearchBar />
       <Block>
         {ctx.isLoadingProducts ? (
           <SkeletonProducts />
+        ) : ctx.products.length === 0 ? (
+          <EmptyComponent message="No hay productos" />
         ) : (
           <ScrollView>
             <OrderSalesProductList />
