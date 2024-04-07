@@ -5,11 +5,8 @@ import { FlatList } from 'react-native-gesture-handler'
 
 import { ITEM_PRODUCT_WIDTH_MAX } from '@screens/components/order-product/ProductVariant'
 
-import useTheme from '@hooks/useTheme'
-
 const Spacer = ({ height = 16 }) => <MotiView style={{ height }} />
 export default function SkeletonProducts() {
-  const theme = useTheme()
   return (
     <MotiView
       transition={{

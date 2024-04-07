@@ -18,15 +18,35 @@ const useOrderSales = (point: AttentionPoint) => {
   const [isLoadingProductsSearch, productsSearch, fetchProductsSearch] = fetchApi(
     ProductService.getSearchProducts,
   )
+  const [isLoadingProductsCategory, productsCategory, fetchProductsByCategory] = fetchApi(
+    ProductService.getCategoryProducts,
+  )
+  const [isLoadingCategories, categories, fetchCategories] = fetchApi(ProductService.getCategories)
   const [isLoadingOrderSales, order, fetchOrder] = fetchApi(OrderSalesService.getDetailUserActive)
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [isOpenOrderCart, setIsOpenOrder] = useState(false)
+  const [categoryIdSelected, setCategoryIdSelected] = useState<string>('TOP')
 
   useEffect(() => {
     if (point.orderId) fetchOrder({ orderId: point.orderId })
-    if (point.id) fetchProductsTop()
+    if (point.id) {
+      fetchProductsTop()
+      fetchCategories()
+    }
   }, [point.orderId])
 
+  useEffect(() => {
+    if (categoryIdSelected !== 'TOP') {
+      fetchProductsByCategory({
+        categoryId: categoryIdSelected,
+      })
+    }
+  }, [categoryIdSelected])
+  useEffect(() => {
+    if (productsCategory) {
+      setProducts(productsCategory)
+    }
+  }, [productsCategory])
   useEffect(() => {
     if (productsTop) {
       setProducts(productsTop)
@@ -116,8 +136,15 @@ const useOrderSales = (point: AttentionPoint) => {
     return movementStringExist !== movementStringToSave
   }, [order?.movementOrder, productOrders])
   const callbackOpenCart = (status: boolean) => setIsOpenOrder(status)
+  const handleSelectCategory = (categoryId: string) => () => {
+    setCategoryIdSelected(categoryId)
+    if (categoryId === 'TOP') {
+      setProducts(productsTop)
+    }
+  }
   return {
-    isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch,
+    isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch || isLoadingProductsCategory,
+    isLoadingCategories,
     isOpenOrderCart,
     isLoadingOrderSales,
     isDisplayButtonConfirm,
@@ -125,13 +152,16 @@ const useOrderSales = (point: AttentionPoint) => {
     point,
     products,
     totalOrder,
+    categories,
     productOrders,
+    categoryIdSelected,
 
     callbackOpenCart,
     handleExistInCart,
     handleSearchProductApi,
     handleUpdateProductToCart,
     handleRemoveProductFromCart,
+    handleSelectCategory,
   }
 }
 

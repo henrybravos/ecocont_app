@@ -1,19 +1,23 @@
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
+import { Chip, ChipProps } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
 import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder'
 import EmptyComponent from '@components/EmptyComponent'
+import Text from '@components/Text'
 import SearchBarComponent from '@components/paper/SearchBar'
 
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
 import ProductComponent from '@screens/components/order-product/Product'
+import SkeletonCategories from '@screens/components/order-product/SkeletonCategories'
 import SkeletonProducts from '@screens/components/order-product/SkeletonProducts'
 import OrderSalesProvider, { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
+import { COLORS } from '@constants/light'
 import { StackNavigation } from '@constants/types/navigation'
 
 const pointDefault = {
@@ -35,26 +39,57 @@ const OrderSalesProductList = () => {
     </View>
   )
 }
-const SearchBar = () => {
-  const ctx = useOrderSalesContext()
-  const [searchQuery, setSearchQuery] = useState('')
-  const onConfirmSearch = (text: string) => {
-    ctx.handleSearchProductApi(text)
-  }
-  const onChangeText = (text: string) => setSearchQuery(text)
+type CategoryProps = ChipProps & {}
+const Category = (props: CategoryProps) => {
   return (
-    <SearchBarComponent
-      value={searchQuery}
-      onChangeText={onChangeText}
-      onConfirmSearch={onConfirmSearch}
-    />
+    <Chip
+      {...props}
+      elevated
+      compact
+      mode="outlined"
+      selectedColor={props.selected ? COLORS.primary.toString() : COLORS.dark.toString()}
+    >
+      {props.children}
+    </Chip>
+  )
+}
+const CategoryList = () => {
+  const ctx = useOrderSalesContext()
+  const CategoriesMemo = useMemo(() => {
+    return ctx.categories?.map((c) => (
+      <Category
+        key={c.id}
+        selected={ctx.categoryIdSelected === c.id}
+        onPress={ctx.handleSelectCategory(c.id)}
+      >
+        {c.name}
+      </Category>
+    ))
+  }, [ctx.categories, ctx.categoryIdSelected])
+  return (
+    <Block flex={0} row paddingVertical={4}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 4 }}
+      >
+        <Category
+          selected={ctx.categoryIdSelected === 'TOP'}
+          onPress={ctx.handleSelectCategory('TOP')}
+        >
+          TOP
+        </Category>
+        {ctx.isLoadingCategories ? <SkeletonCategories /> : CategoriesMemo}
+      </ScrollView>
+    </Block>
   )
 }
 const OrderSalesManagement = () => {
   const ctx = useOrderSalesContext()
   return (
     <Block>
-      <SearchBar />
+      <SearchBarComponent onConfirmSearch={ctx.handleSearchProductApi} elevation={1} />
+      <CategoryList />
       <Block>
         {ctx.isLoadingProducts ? (
           <SkeletonProducts />
