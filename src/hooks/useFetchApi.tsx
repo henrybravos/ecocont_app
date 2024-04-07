@@ -7,7 +7,7 @@ export default function fetchApi<S, A>(
 ): [boolean, S, (arg?: A) => Promise<void>]
 
 export default function fetchApi<S, A>(apiFunction: ApiFunctionWithArg<S, A>) {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState<S | null>(null)
   const fetch = async (arg?: A) => {
     setLoading(true)
