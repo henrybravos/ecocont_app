@@ -14,13 +14,14 @@ export default function SearchBarComponent({
   margin = 0,
   minHeightInput = 0,
   style,
-  onChangeText,
   onConfirmSearch,
   ...rest
-}: SearchBarProps) {
+}: Omit<SearchBarProps, 'value' | 'onChangeText'>) {
+  const [searchQuery, setSearchQuery] = useState('')
+
   const [timeoutCancel, setTimeoutCancel] = useState<NodeJS.Timeout | null>(null)
   const handleOnChangeText = (text: string) => {
-    onChangeText && onChangeText(text)
+    setSearchQuery(text)
     if (timeoutCancel) clearTimeout(timeoutCancel)
     if (text.length === 0) {
       onConfirmSearch && onConfirmSearch(text)
@@ -49,6 +50,7 @@ export default function SearchBarComponent({
       inputStyle={{
         minHeight: minHeightInput,
       }}
+      value={searchQuery}
       onChangeText={handleOnChangeText}
     />
   )
