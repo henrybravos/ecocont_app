@@ -1,7 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import { AuthService } from '@core/index'
-import { Auth, Business, LocationBusiness, UserAuth } from '@core/types'
+import { UserAuth } from '@core/types'
 
 import client from '@utils/apollo'
 import { validateToken } from '@utils/scripts'
@@ -52,7 +52,9 @@ export const useDataProvider = () => {
   }
   const refreshToken = async (token: string | undefined) => {
     if (!token) return
-    const response = await AuthService.refreshToken(client, token)
+    const response = await AuthService.refreshToken({
+      authentication: token,
+    })
     if (response.data) {
       userAuth.setValue((prev) => ({
         ...prev,
