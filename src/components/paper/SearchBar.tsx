@@ -21,11 +21,11 @@ export default function SearchBarComponent({
   const [timeoutCancel, setTimeoutCancel] = useState<NodeJS.Timeout | null>(null)
   const handleOnChangeText = (text: string) => {
     onChangeText && onChangeText(text)
+    if (timeoutCancel) clearTimeout(timeoutCancel)
     if (text.length === 0) {
       onConfirmSearch && onConfirmSearch(text)
       return
     }
-    if (timeoutCancel) clearTimeout(timeoutCancel)
     setTimeoutCancel(
       setTimeout(() => {
         onConfirmSearch && onConfirmSearch(text)
