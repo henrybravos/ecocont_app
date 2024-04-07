@@ -1,7 +1,15 @@
 import gql from 'graphql-tag'
 
-import { productResponseAdapter } from '@core/adapters/product.adapter'
-import { ProductSearchResponseApi, ProductTopResponseApi } from '@core/types'
+import {
+  productCategoryResponseAdapter,
+  productResponseAdapter,
+} from '@core/adapters/product.adapter'
+import {
+  CategoryResponseApi,
+  ProductByCategoryResponseApi,
+  ProductSearchResponseApi,
+  ProductTopResponseApi,
+} from '@core/types'
 
 import client from '@utils/apollo'
 import { getAuthenticationStorage } from '@utils/scripts'
@@ -77,9 +85,41 @@ const ProductService = {
       .then((response) => {
         return productResponseAdapter(response.data.productosbyParam)
       })
-      .catch((error) => {
-        console.error(error)
-        return error
+  },
+  getCategoryProducts: async ({ categoryId }: { categoryId: string }) => {
+    return client
+      .query<ProductByCategoryResponseApi>({
+        query: gql`
+          query productsByCategoriaId($categoria_id: String!) {
+            productsByCategoriaId(categoria_id: $categoria_id)  ${gqlProducts}
+          }
+        `,
+        variables: { categoria_id: categoryId },
+        fetchPolicy: 'no-cache',
+        context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
+      })
+      .then((response) => {
+        return productResponseAdapter(response.data.productsByCategoriaId)
+      })
+  },
+  getCategories: async () => {
+    return client
+      .query<CategoryResponseApi>({
+        query: gql`
+          {
+            Categorias: categorias {
+              id
+              codigo
+              nombre
+            }
+          }
+        `,
+        variables: {},
+        fetchPolicy: 'no-cache',
+        context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
+      })
+      .then((response) => {
+        return productCategoryResponseAdapter(response.data)
       })
   },
 }

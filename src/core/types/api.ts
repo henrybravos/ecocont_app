@@ -178,3 +178,13 @@ export type ProductTopResponseApi = {
 export type ProductSearchResponseApi = {
   productosbyParam: ProductResponseApi[]
 }
+export type ProductByCategoryResponseApi = {
+  productsByCategoriaId: ProductResponseApi[]
+}
+export type CategoryResponseApi = {
+  Categorias: {
+    id: string
+    nombre: string
+    codigo: string
+  }[]
+}

@@ -39,3 +39,8 @@ export type Product = {
   measurementUnit: MeasurementUnit
   variants: ProductVariant[]
 }
+export type Category = {
+  id: string
+  name: string
+  code: string
+}

@@ -1,5 +1,10 @@
-import { ProductApi, ProductResponseApi, ProductTopResponseApi } from '@core/types'
-import { MeasurementUnit, Product } from '@core/types/product'
+import {
+  CategoryResponseApi,
+  ProductApi,
+  ProductResponseApi,
+  ProductTopResponseApi,
+} from '@core/types'
+import { Category, MeasurementUnit, Product } from '@core/types/product'
 
 export const measurementUnitAdapter = (measurement: ProductApi['medida']): MeasurementUnit => {
   return {
@@ -52,4 +57,11 @@ export const productAdapter = (product: ProductTopResponseApi['productosTop'][0]
 }
 export const productResponseAdapter = (response: ProductResponseApi[]): Product[] => {
   return response.map(productAdapter)
+}
+export const productCategoryResponseAdapter = (response: CategoryResponseApi): Category[] => {
+  return response.Categorias.map((c) => ({
+    id: c.id,
+    name: c.nombre,
+    code: c.codigo,
+  }))
 }
