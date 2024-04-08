@@ -8,9 +8,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Block from '@components/Block'
 import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder'
 import EmptyComponent from '@components/EmptyComponent'
-import Text from '@components/Text'
 import SearchBarComponent from '@components/paper/SearchBar'
 
+import ProductEditDialog from '@screens/components/order-product/EditProductDialog'
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
 import ProductComponent from '@screens/components/order-product/Product'
 import SkeletonCategories from '@screens/components/order-product/SkeletonCategories'
@@ -106,6 +106,7 @@ const OrderSalesManagement = () => {
       <Block flex={0}>
         <OrderCartDraggable />
       </Block>
+      <ProductEditDialog />
     </Block>
   )
 }

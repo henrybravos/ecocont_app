@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Swipeable, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import { Divider, Icon } from 'react-native-paper'
+import { Divider, IconButton } from 'react-native-paper'
 
 import Block from '@components/Block'
 import Text from '@components/Text'
@@ -9,13 +9,18 @@ import { MovementOrder } from '@core/types/order-sales'
 
 import { formatNumber } from '@utils/scripts'
 
+type SwipeProductOrderProps = {
+  item: Partial<MovementOrder>
+  currency: string
+  editCallback: () => void
+  deleteCallback: () => void
+}
 const SwipeProductOrder = ({
   item,
   currency,
-}: {
-  item: Partial<MovementOrder>
-  currency: string
-}) => {
+  editCallback,
+  deleteCallback,
+}: SwipeProductOrderProps) => {
   const [openDetail, setOpenDetail] = useState(false)
   const renderRightActions = () => {
     return (
@@ -28,7 +33,7 @@ const SwipeProductOrder = ({
           height="100%"
           justify="center"
         >
-          <Icon color="#fff" source="pencil" size={32} />
+          <IconButton icon="pencil" size={32} iconColor="#fff" onPress={editCallback} />
         </Block>
 
         <Block
@@ -39,7 +44,7 @@ const SwipeProductOrder = ({
           height="100%"
           justify="center"
         >
-          <Icon color="#fff" source="delete" size={32} />
+          <IconButton icon="delete" size={32} iconColor="#fff" onPress={deleteCallback} />
         </Block>
       </Block>
     )

@@ -23,13 +23,11 @@ const getImageProduct = (uri: string | undefined) => {
       }
     : require('@assets/img/default_product.jpg')
 }
-const ProductVariantComponent = ({
-  item,
-  product,
-}: {
+type ProductVariantComponentProps = {
   item: Product['variants'][0]
   product: Product
-}) => {
+}
+const ProductVariantComponent = ({ item, product }: ProductVariantComponentProps) => {
   const ctx = useOrderSalesContext()
   const [visibleActions, setVisibleActions] = useState(false)
   const productOrder = ctx.handleExistInCart(item.id)
@@ -57,9 +55,7 @@ const ProductVariantComponent = ({
       setVisibleActions(false)
     }
   }
-  const handleShowEditModal = () => {
-    alert('next to implement')
-  }
+
   const labelVariant = formatNumber(item.price)
   return (
     <Surface key={item.id} elevation={1} style={styles.itemProductContainer}>
@@ -102,7 +98,7 @@ const ProductVariantComponent = ({
           >
             <Block flex={0} style={[styles.itemProductHeader]} center row align="center">
               <IconButton
-                onPress={handleShowEditModal}
+                onPress={ctx.handleProductSelected('edit', productOrder)}
                 mode="outlined"
                 icon="pencil"
                 size={12}
