@@ -10,8 +10,13 @@ import fetchApi from '@hooks/useFetchApi'
 
 import { reduceSumMultiplyArray } from '@utils/scripts'
 
+type ProductSelected = {
+  mode?: 'edit' | 'delete'
+  product?: Partial<MovementOrder>
+}
 const useOrderSales = (point: AttentionPoint) => {
   const [products, setProducts] = useState<Product[]>([])
+  const [productSelected, setProductSelected] = useState<ProductSelected>({})
   const [isLoadingProductsTop, productsTop, fetchProductsTop] = fetchApi(
     ProductService.getTopProducts,
   )
@@ -142,6 +147,12 @@ const useOrderSales = (point: AttentionPoint) => {
       setProducts(productsTop)
     }
   }
+  const handleProductSelected = useCallback(
+    (mode?: 'edit' | 'delete', product?: Partial<MovementOrder>) => () => {
+      setProductSelected({ mode, product })
+    },
+    [],
+  )
   return {
     isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch || isLoadingProductsCategory,
     isLoadingCategories,
@@ -155,6 +166,7 @@ const useOrderSales = (point: AttentionPoint) => {
     categories,
     productOrders,
     categoryIdSelected,
+    productSelected,
 
     callbackOpenCart,
     handleExistInCart,
@@ -162,6 +174,7 @@ const useOrderSales = (point: AttentionPoint) => {
     handleUpdateProductToCart,
     handleRemoveProductFromCart,
     handleSelectCategory,
+    handleProductSelected,
   }
 }
 
