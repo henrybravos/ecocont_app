@@ -10,7 +10,7 @@ import Text from '@components/Text'
 import { DropdownList } from '@components/paper'
 
 import UserSalesService from '@core/graphql/UserSalesService'
-import { AttentionPoint, Checkout, SalesArea, UserSales } from '@core/types/user'
+import { AttentionPoint, Checkout, SalesArea } from '@core/types/user'
 
 import { useFetchApi } from '@hooks/index'
 import useTheme from '@hooks/useTheme'

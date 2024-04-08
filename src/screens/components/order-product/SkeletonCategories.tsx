@@ -1,6 +1,6 @@
 import { MotiView } from 'moti'
 import { Skeleton } from 'moti/skeleton'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 export default function SkeletonCategories() {
   return (
