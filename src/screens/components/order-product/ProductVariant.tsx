@@ -46,7 +46,15 @@ const ProductVariantComponent = ({ item, product }: ProductVariantComponentProps
   }
   const updateOrPushToCart = () => {
     toggleVisibleActions()
-    ctx.handleUpdateProductToCart(item, product, 1, item.price)
+    ctx.handleUpdateProductToCart(
+      {
+        id: item.id,
+        name: item.name,
+      },
+      product,
+      quantityOrder + 1,
+      item.price,
+    )
   }
   const removeOrDecreaseToCart = () => {
     toggleVisibleActions()

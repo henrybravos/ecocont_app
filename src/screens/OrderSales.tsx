@@ -10,9 +10,10 @@ import { BOTTOM_SHEET_MIN_HEIGHT } from '@components/DraggableBottomPanResponder
 import EmptyComponent from '@components/EmptyComponent'
 import SearchBarComponent from '@components/paper/SearchBar'
 
-import ProductEditDialog from '@screens/components/order-product/EditProductDialog'
+import DeleteProductDialog from '@screens/components/order-product/DeleteProductDialog'
+import EditProductDialog from '@screens/components/order-product/EditProductDialog'
 import OrderCartDraggable from '@screens/components/order-product/OrderDraggableBottom'
-import ProductComponent from '@screens/components/order-product/Product'
+import ProductListOrderSales from '@screens/components/order-product/ProductListOrderSales'
 import SkeletonCategories from '@screens/components/order-product/SkeletonCategories'
 import SkeletonProducts from '@screens/components/order-product/SkeletonProducts'
 import OrderSalesProvider, { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
@@ -29,16 +30,7 @@ const pointDefault = {
   x: 21,
   y: 0,
 }
-const OrderSalesProductList = () => {
-  const ctx = useOrderSalesContext()
-  return (
-    <View style={styles.container}>
-      {ctx.products.map((p) => (
-        <ProductComponent key={p.id} p={p} scrollEnabled={true} />
-      ))}
-    </View>
-  )
-}
+
 type CategoryProps = ChipProps & {}
 const Category = (props: CategoryProps) => {
   return (
@@ -96,9 +88,7 @@ const OrderSalesManagement = () => {
         ) : ctx.products.length === 0 ? (
           <EmptyComponent message="No hay productos" />
         ) : (
-          <ScrollView>
-            <OrderSalesProductList />
-          </ScrollView>
+          <ProductListOrderSales />
         )}
       </Block>
       {ctx.isOpenOrderCart && <View style={styles.overlay} />}
@@ -106,7 +96,8 @@ const OrderSalesManagement = () => {
       <Block flex={0}>
         <OrderCartDraggable />
       </Block>
-      <ProductEditDialog />
+      <EditProductDialog />
+      <DeleteProductDialog />
     </Block>
   )
 }
@@ -125,11 +116,6 @@ const OrderSalesScreen = () => {
 }
 export default OrderSalesScreen
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
   overlay: {
     backgroundColor: '#000',
     opacity: 0.65,
