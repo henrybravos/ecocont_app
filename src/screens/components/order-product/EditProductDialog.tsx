@@ -107,7 +107,7 @@ const ProductEditDialog = () => {
             label="Can. x Precio"
             editable={false}
             value={subTotal}
-            left={<TextInput.Affix text={ctx.order.currency.name} />}
+            left={<TextInput.Affix text={ctx.order?.currency.name} />}
           />
         </View>
       </View>
