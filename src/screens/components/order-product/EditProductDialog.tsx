@@ -7,64 +7,69 @@ import { Dialog } from '@components/paper'
 
 import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
-import { MovementOrder } from '@core/types/order-sales'
-
 import { formatNumber } from '@utils/scripts'
 
 const ProductEditDialog = () => {
   const ctx = useOrderSalesContext()
-  const [productOrder, setProductOrder] = useState<Partial<MovementOrder>>({
-    ...ctx.productSelected.product,
+  const movement = ctx.productSelected?.movement
+
+  const [quantityPrice, setQuantityPrice] = useState({
+    quantityStr: '0',
+    priceStr: '0',
   })
   useEffect(() => {
-    setProductOrder({ ...ctx.productSelected.product })
-  }, [ctx.productSelected.product])
+    setQuantityPrice({
+      quantityStr: movement?.quantity?.toString() || '0',
+      priceStr: movement?.unitPrice?.toString() || '0',
+    })
+  }, [movement])
+
+  const price = parseFloat(quantityPrice.priceStr)
+  const quantity = parseFloat(quantityPrice.quantityStr)
   const plusQuantity = () => incrementQuantity(1)
   const minusQuantity = () => incrementQuantity(-1)
   const incrementQuantity = (increment: number) => {
-    const quantity = (productOrder?.quantity || 0) + increment
-    if (quantity < 0) return
-    setProductOrder({ ...productOrder, quantity })
+    const q = parseInt(quantityPrice.quantityStr) + increment
+    if (q < 0) return
+    setQuantityPrice({ ...quantityPrice, quantityStr: q.toString() })
   }
 
-  const setQuantity = (quantityString: string) => {
-    const quantity = parseInt(quantityString) ?? 0
-    setProductOrder({ ...productOrder, quantity })
+  const handleUpdateQuantity = (quantityString: string) => {
+    setQuantityPrice({ ...quantityPrice, quantityStr: quantityString })
   }
-  const setUnitPrice = (unitPriceString: string) => {
-    const unitPrice = parseFloat(unitPriceString) ?? 0
-    setProductOrder({ ...productOrder, unitPrice })
+  const handleUpdatePrice = (unitPriceString: string) => {
+    setQuantityPrice({ ...quantityPrice, priceStr: unitPriceString })
   }
-  const visibleEdit = ctx.productSelected.mode === 'edit' && !!productOrder
-  const quantity = productOrder?.quantity
-    ? isNaN(productOrder?.quantity)
-      ? ''
-      : productOrder?.quantity.toString()
-    : ''
+  const subTotalNumber = quantity * price
 
-  const unitPrice = productOrder?.unitPrice
-    ? isNaN(productOrder?.unitPrice)
-      ? ''
-      : productOrder?.unitPrice.toString()
-    : ''
-  const subTotal = formatNumber((productOrder?.quantity || 0) * (productOrder?.unitPrice || 0))
+  const handleConfirmEdit = () => {
+    if (subTotalNumber > 0 && movement && movement.product) {
+      const priceDetail = {
+        id: movement.priceDetail?.id || '',
+        name: movement.priceDetail?.name || '',
+      }
+      ctx.handleUpdateProductToCart(priceDetail, movement.product, quantity, price)
+      ctx.handleProductSelected()()
+    }
+  }
+  const visibleEdit = ctx.productSelected.mode === 'edit' && !!movement
+
+  const subTotal = formatNumber(quantity * price)
   return (
     <Dialog
       doneProps={{
         mode: 'contained',
         compact: true,
-        disabled: !productOrder?.quantity || !productOrder?.unitPrice,
+        disabled: isNaN(subTotalNumber) || subTotalNumber <= 0,
       }}
       cancelCallback={ctx.handleProductSelected()}
-      confirmCallback={() => {
-        alert('next to implement')
-      }}
+      confirmCallback={handleConfirmEdit}
       title={`EDITAR:`}
       visible={visibleEdit}
       style={{ backgroundColor: '#fff' }}
     >
       <Text align="justify" marginBottom={16}>
-        {productOrder?.priceDetail?.name}
+        {ctx.productSelected?.movement?.priceDetail?.name}
       </Text>
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <View style={{ flex: 1 }}>
@@ -72,8 +77,8 @@ const ProductEditDialog = () => {
             mode="outlined"
             dense
             label="Cant."
-            value={quantity}
-            onChangeText={setQuantity}
+            value={quantityPrice.quantityStr}
+            onChangeText={handleUpdateQuantity}
             left={
               <TextInput.Icon
                 mode="contained-tonal"
@@ -92,8 +97,8 @@ const ProductEditDialog = () => {
             mode="outlined"
             dense
             label="Precio"
-            value={unitPrice}
-            onChangeText={setUnitPrice}
+            value={quantityPrice.priceStr}
+            onChangeText={handleUpdatePrice}
             left={<TextInput.Affix text={ctx.order?.currency?.name} />}
           />
         </View>
@@ -106,7 +111,7 @@ const ProductEditDialog = () => {
             dense
             label="Can. x Precio"
             editable={false}
-            value={subTotal}
+            value={isNaN(subTotalNumber) ? '0' : subTotal}
             left={<TextInput.Affix text={ctx.order?.currency.name} />}
           />
         </View>

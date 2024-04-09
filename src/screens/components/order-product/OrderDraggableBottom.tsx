@@ -76,10 +76,6 @@ const ProductListCartShopping = () => {
 
 const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
-  const confirmDelete = () => {
-    alert('next to implement')
-  }
-  const visibleDelete = ctx.productSelected?.mode === 'delete' && !!ctx.productSelected?.product
   return (
     <DraggableBottomPanResponder callbackOpen={ctx.callbackOpenCart}>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
@@ -88,23 +84,6 @@ const OrderDraggableBottom = () => {
         <Divider bold />
         <Divider bold />
         <ProductListCartShopping />
-        <Dialog
-          doneProps={{
-            mode: 'contained',
-            compact: true,
-          }}
-          cancelCallback={ctx.handleProductSelected()}
-          confirmCallback={confirmDelete}
-          title="¿Está seguro?"
-          visible={visibleDelete}
-        >
-          <Text align="justify" bold>
-            Usted desea eliminar el producto:
-          </Text>
-          <Text align="justify" bold marginTop={16}>
-            {ctx.productSelected.product?.priceDetail?.name}
-          </Text>
-        </Dialog>
       </Block>
     </DraggableBottomPanResponder>
   )

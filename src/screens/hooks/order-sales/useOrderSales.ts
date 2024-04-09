@@ -12,7 +12,7 @@ import { reduceSumMultiplyArray } from '@utils/scripts'
 
 type ProductSelected = {
   mode?: 'edit' | 'delete'
-  product?: Partial<MovementOrder>
+  movement?: Partial<MovementOrder>
 }
 const useOrderSales = (point: AttentionPoint) => {
   const [products, setProducts] = useState<Product[]>([])
@@ -110,22 +110,29 @@ const useOrderSales = (point: AttentionPoint) => {
     [productOrders],
   )
   const handleUpdateProductToCart = useCallback(
-    (variant: Product['variants'][0], product: Product, quantity: number, unitPrice: number) => {
+    (
+      priceDetails: {
+        id: string
+        name: string
+      },
+      product: Partial<Product>,
+      quantity: number,
+      unitPrice: number,
+    ) => {
       const existIndex = productOrders.findIndex(
-        (productOrder) => productOrder.priceDetail?.id === variant.id,
+        (productOrder) => productOrder.priceDetail?.id === priceDetails.id,
       )
       if (existIndex >= 0) {
         const newProductOrders = [...productOrders]
-        newProductOrders[existIndex].quantity =
-          (newProductOrders[existIndex].quantity || 0) + quantity
+        newProductOrders[existIndex].quantity = quantity
         newProductOrders[existIndex].unitPrice = unitPrice
         setProductOrders(newProductOrders)
       } else {
         const newItem = {
           product,
           priceDetail: {
-            id: variant.id,
-            name: variant.name,
+            id: priceDetails.id || '',
+            name: priceDetails.name || '',
           },
           quantity,
           unitPrice,
@@ -148,8 +155,8 @@ const useOrderSales = (point: AttentionPoint) => {
     }
   }
   const handleProductSelected = useCallback(
-    (mode?: 'edit' | 'delete', product?: Partial<MovementOrder>) => () => {
-      setProductSelected({ mode, product })
+    (mode?: 'edit' | 'delete', movement?: Partial<MovementOrder>) => () => {
+      setProductSelected({ mode, movement })
     },
     [],
   )
