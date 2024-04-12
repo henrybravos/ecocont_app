@@ -18,7 +18,10 @@
       }
     },
     "production": {
-      "channel": "main"
+      "channel": "main",
+      "android": {
+        "image": "latest"
+      }
     }
   },
   "submit": {
