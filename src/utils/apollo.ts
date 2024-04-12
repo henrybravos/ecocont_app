@@ -8,6 +8,8 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
 
+import { URL_API, WS_URL } from '@constants/environment'
+
 import { SESSION_IN_OTHER_DEVICE, TOKEN_EXPIRED, TOKEN_INVALID } from './error'
 
 const client = new ApolloClient({
@@ -40,7 +42,7 @@ const client = new ApolloClient({
         return false
       },
       new WebSocketLink({
-        uri: `ws://erp.ecocont.pe:3008/graphql`,
+        uri: WS_URL,
         options: {
           reconnect: true,
           connectionParams: {
@@ -51,7 +53,7 @@ const client = new ApolloClient({
         },
       }),
       new HttpLink({
-        uri: `https://erp.ecocont.pe:3008/api`,
+        uri: URL_API,
         headers: {
           //      Authentication: `Bearer ${authentication}`
         },

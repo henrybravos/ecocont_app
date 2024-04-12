@@ -14,12 +14,14 @@ import { Product } from '@core/types/product'
 
 import { formatNumber } from '@utils/scripts'
 
+import { URI_IMAGE_PRICE } from '@constants/environment'
+
 export const ITEM_PRODUCT_WIDTH_MAX = Dimensions.get('window').width / 3 - 8
 
 const getImageProduct = (uri: string | undefined) => {
   return uri
     ? {
-        uri,
+        uri: `${URI_IMAGE_PRICE}${uri}`,
       }
     : require('@assets/img/default_product.jpg')
 }

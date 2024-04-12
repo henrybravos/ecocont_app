@@ -11,7 +11,7 @@ import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 const initAuth = {
   email: 'henry123@gmail.com',
-  password: '123457',
+  password: '123456',
   invalidEmail: false,
   invalidPassword: false,
 }
