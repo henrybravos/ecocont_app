@@ -108,12 +108,12 @@ const DrawerContentCustom = (props: DrawerContentComponentProps) => {
       contentContainerStyle={{ paddingBottom: sizes.padding }}
     >
       <Block paddingHorizontal={sizes.padding}>
-        <Block flex={0} row align="center" marginBottom={sizes.l}>
+        <Block flex={0} row align="center">
           <Block>
-            <Text size={12} semibold align={'center'}>
+            <Text size={12} white semibold align={'center'}>
               ALTERNATIVAS
             </Text>
-            <Text size={12} semibold align={'center'}>
+            <Text size={12} white semibold align={'center'}>
               CONTABLES
             </Text>
           </Block>

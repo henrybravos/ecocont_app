@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Swipeable, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Divider, IconButton } from 'react-native-paper'
 
@@ -14,14 +14,18 @@ type SwipeProductOrderProps = {
   currency: string
   editCallback: () => void
   deleteCallback: () => void
+  onSwipeableOpen: (swipeable: React.RefObject<Swipeable>) => void
 }
 const SwipeProductOrder = ({
   item,
   currency,
   editCallback,
   deleteCallback,
+  onSwipeableOpen,
 }: SwipeProductOrderProps) => {
+  const swipeRef = useRef<Swipeable>(null)
   const [openDetail, setOpenDetail] = useState(false)
+
   const renderRightActions = () => {
     return (
       <Block flex={0} row align="center" width={100}>
@@ -50,13 +54,18 @@ const SwipeProductOrder = ({
     )
   }
   const toggleOpenDetail = () => setOpenDetail((prev) => !prev)
+
   const labelDescription =
     item.priceDetail?.name === item.product?.description
       ? item.product?.description
       : `${item.priceDetail?.name} - ${item.product?.description}`
   return (
     <Block>
-      <Swipeable renderRightActions={renderRightActions}>
+      <Swipeable
+        renderRightActions={renderRightActions}
+        ref={swipeRef}
+        onSwipeableOpen={() => onSwipeableOpen(swipeRef)}
+      >
         <TouchableWithoutFeedback onPress={toggleOpenDetail}>
           <Block
             row

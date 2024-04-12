@@ -55,7 +55,6 @@ const HeaderCartShopping = () => {
 }
 const ProductListCartShopping = () => {
   const ctx = useOrderSalesContext()
-
   return (
     <Block flex={1}>
       <ScrollView>
@@ -66,6 +65,7 @@ const ProductListCartShopping = () => {
             currency={ctx.order?.currency?.name || ''}
             deleteCallback={ctx.handleProductSelected('delete', p)}
             editCallback={ctx.handleProductSelected('edit', p)}
+            onSwipeableOpen={ctx.handleOpenProductCartActions}
           />
         ))}
       </ScrollView>

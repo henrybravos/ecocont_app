@@ -51,13 +51,13 @@ const CategoryList = () => {
     return ctx.categories?.map((c) => (
       <Category
         key={c.id}
-        selected={ctx.categoryIdSelected === c.id}
+        selected={!ctx.searchText && ctx.categoryIdSelected === c.id}
         onPress={ctx.handleSelectCategory(c.id)}
       >
         {c.name}
       </Category>
     ))
-  }, [ctx.categories, ctx.categoryIdSelected])
+  }, [ctx.categories, ctx.categoryIdSelected, ctx.searchText])
   return (
     <Block flex={0} row paddingVertical={4}>
       <ScrollView

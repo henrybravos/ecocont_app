@@ -9,7 +9,7 @@ const ProductListOrderSales = () => {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl refreshing={ctx.isLoadingProducts} onRefresh={ctx.fetchProductsTop} />
+        <RefreshControl refreshing={ctx.isLoadingProducts} onRefresh={ctx.fetchProducts} />
       }
     >
       <View style={styles.container}>

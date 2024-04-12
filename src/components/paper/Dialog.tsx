@@ -1,7 +1,7 @@
 import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
 import { Button, ButtonProps, Dialog, DialogProps, Portal } from 'react-native-paper'
 
-type DialogComponentProps = DialogProps & {
+type DialogComponentProps = Omit<DialogProps, 'onDismiss'> & {
   title?: string
   labelCancel?: string
   labelDone?: string

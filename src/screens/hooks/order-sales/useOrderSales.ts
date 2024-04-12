@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Swipeable } from 'react-native-gesture-handler'
 
 import OrderSalesService from '@core/graphql/OrderSalesService'
 import ProductService from '@core/graphql/ProductService'
@@ -16,6 +17,8 @@ type ProductSelected = {
 }
 const useOrderSales = (point: AttentionPoint) => {
   const [products, setProducts] = useState<Product[]>([])
+  const openSwipeProduct = useRef<Swipeable | null>(null)
+  const [searchText, setSearchText] = useState<string>('')
   const [productSelected, setProductSelected] = useState<ProductSelected>({})
   const [isLoadingProductsTop, productsTop, fetchProductsTop] = fetchApi(
     ProductService.getTopProducts,
@@ -34,7 +37,7 @@ const useOrderSales = (point: AttentionPoint) => {
   useEffect(() => {
     if (point.orderId) fetchOrder({ orderId: point.orderId })
     if (point.id) {
-      fetchProductsTop()
+      fetchProducts()
       fetchCategories()
     }
   }, [point.orderId])
@@ -68,7 +71,21 @@ const useOrderSales = (point: AttentionPoint) => {
     }
   }, [order])
   if (!point.id) return
-
+  const fetchProducts = () => {
+    if (searchText.trim().length === 0) {
+      if (categoryIdSelected === 'TOP') {
+        fetchProductsTop()
+      } else {
+        fetchProductsByCategory({
+          categoryId: categoryIdSelected,
+        })
+      }
+    } else {
+      fetchProductsSearch({
+        search: searchText,
+      })
+    }
+  }
   const totalOrder = useMemo(
     () => reduceSumMultiplyArray(productOrders || [], 'unitPrice', 'quantity', 0),
     [productOrders],
@@ -82,12 +99,17 @@ const useOrderSales = (point: AttentionPoint) => {
   const handleSearchProductApi = useCallback(
     (search: string) => {
       if (search.trim().length === 0) {
-        setProducts(productsTop)
+        if (categoryIdSelected === 'TOP') {
+          setProducts(productsTop)
+        } else {
+          setProducts(productsCategory)
+        }
       } else {
         fetchProductsSearch({ search })
       }
+      setSearchText(search)
     },
-    [fetchProductsSearch, productsTop],
+    [fetchProductsSearch, productsTop, productsCategory],
   )
   const handleRemoveProductFromCart = useCallback(
     (productVariantId: string, quantityDecrease: number) => {
@@ -155,9 +177,16 @@ const useOrderSales = (point: AttentionPoint) => {
   const handleProductSelected = useCallback(
     (mode?: 'edit' | 'delete', movement?: Partial<MovementOrder>) => () => {
       setProductSelected({ mode, movement })
+      if (!mode && !movement) {
+        openSwipeProduct?.current?.close()
+      }
     },
     [],
   )
+  const handleOpenProductCartActions = (swipeable: RefObject<Swipeable>) => {
+    openSwipeProduct.current = swipeable.current
+  }
+
   return {
     isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch || isLoadingProductsCategory,
     isLoadingCategories,
@@ -171,6 +200,7 @@ const useOrderSales = (point: AttentionPoint) => {
     productOrders,
     categoryIdSelected,
     productSelected,
+    searchText,
 
     handleExistInCart,
     handleSearchProductApi,
@@ -178,7 +208,8 @@ const useOrderSales = (point: AttentionPoint) => {
     handleRemoveProductFromCart,
     handleSelectCategory,
     handleProductSelected,
-    fetchProductsTop,
+    fetchProducts,
+    handleOpenProductCartActions,
   }
 }
 
