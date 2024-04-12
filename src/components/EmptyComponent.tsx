@@ -7,10 +7,12 @@ import useTheme from '@hooks/useTheme'
 
 type EmptyComponentProps = {
   message: string
+  visible?: boolean
   sizeIcon?: number
 }
-const EmptyComponent = ({ message, sizeIcon = 64 }: EmptyComponentProps) => {
+const EmptyComponent = ({ message, sizeIcon = 64, visible = false }: EmptyComponentProps) => {
   const theme = useTheme()
+  if (!visible) return null
   return (
     <Block align="center" flex={1} height={theme.sizes.height - 150} center>
       <Icon color="grey" size={sizeIcon} source="information-outline" />

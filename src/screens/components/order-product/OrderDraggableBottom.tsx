@@ -6,7 +6,6 @@ import Block from '@components/Block'
 import DraggableBottomPanResponder from '@components/DraggableBottomPanResponder'
 import Text from '@components/Text'
 import { AnimatedText } from '@components/animated'
-import { Dialog } from '@components/paper'
 
 import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrder'
 import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
@@ -77,7 +76,7 @@ const ProductListCartShopping = () => {
 const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
   return (
-    <DraggableBottomPanResponder callbackOpen={ctx.callbackOpenCart}>
+    <DraggableBottomPanResponder>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
         {ctx.isLoadingOrderSales && <ProgressBar indeterminate />}
         <HeaderCartShopping />

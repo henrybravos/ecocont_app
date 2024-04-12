@@ -1,7 +1,8 @@
+import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
 import { Button, ButtonProps, Dialog, DialogProps, Portal } from 'react-native-paper'
 
 type DialogComponentProps = DialogProps & {
-  title: string
+  title?: string
   labelCancel?: string
   labelDone?: string
   doneProps?: Omit<ButtonProps, 'children'>
@@ -23,20 +24,24 @@ const DialogComponent = ({
   return (
     <Portal>
       <Dialog {...rest} onDismiss={cancelCallback}>
-        <Dialog.Title style={{ textAlign: 'justify' }}>{title}</Dialog.Title>
-        <Dialog.Content>{children}</Dialog.Content>
-        <Dialog.Actions>
-          {cancelCallback && (
-            <Button {...cancelProps} onPress={cancelCallback}>
-              {labelCancel || 'Cancelar'}
-            </Button>
-          )}
-          {confirmCallback && (
-            <Button {...doneProps} onPress={confirmCallback}>
-              {labelDone || 'Confirmar'}
-            </Button>
-          )}
-        </Dialog.Actions>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ paddingTop: 12 }}>
+            {title && <Dialog.Title style={{ textAlign: 'justify' }}>{title}</Dialog.Title>}
+            <Dialog.Content>{children}</Dialog.Content>
+            <Dialog.Actions>
+              {cancelCallback && (
+                <Button {...cancelProps} onPress={cancelCallback}>
+                  {labelCancel || 'Cancelar'}
+                </Button>
+              )}
+              {confirmCallback && (
+                <Button {...doneProps} onPress={confirmCallback}>
+                  {labelDone || 'Confirmar'}
+                </Button>
+              )}
+            </Dialog.Actions>
+          </View>
+        </TouchableWithoutFeedback>
       </Dialog>
     </Portal>
   )

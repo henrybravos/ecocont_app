@@ -83,19 +83,15 @@ const OrderSalesManagement = () => {
       <SearchBarComponent onConfirmSearch={ctx.handleSearchProductApi} elevation={1} />
       <CategoryList />
       <Block>
-        {ctx.isLoadingProducts ? (
-          <SkeletonProducts />
-        ) : ctx.products.length === 0 ? (
-          <EmptyComponent message="No hay productos" />
-        ) : (
-          <ProductListOrderSales />
-        )}
+        <SkeletonProducts visible={ctx.isLoadingProducts} />
+        <EmptyComponent
+          message="No hay productos"
+          visible={!ctx.isLoadingProducts && ctx.products.length === 0}
+        />
+        <ProductListOrderSales />
       </Block>
-      {ctx.isOpenOrderCart && <View style={styles.overlay} />}
       <Block flex={0} height={BOTTOM_SHEET_MIN_HEIGHT} style={styles.transparent} />
-      <Block flex={0}>
-        <OrderCartDraggable />
-      </Block>
+      <OrderCartDraggable />
       <EditProductDialog />
       <DeleteProductDialog />
     </Block>
@@ -116,14 +112,6 @@ const OrderSalesScreen = () => {
 }
 export default OrderSalesScreen
 const styles = StyleSheet.create({
-  overlay: {
-    backgroundColor: '#000',
-    opacity: 0.65,
-    top: 0,
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-  },
   transparent: {
     backgroundColor: 'transparent',
   },

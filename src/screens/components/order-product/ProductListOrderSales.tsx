@@ -1,12 +1,17 @@
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 
 import ProductComponent from '@screens/components/order-product/Product'
 import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
 
 const ProductListOrderSales = () => {
   const ctx = useOrderSalesContext()
+  if (!ctx.products.length || ctx.isLoadingProducts) return null
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={ctx.isLoadingProducts} onRefresh={ctx.fetchProductsTop} />
+      }
+    >
       <View style={styles.container}>
         {ctx.products.map((p) => (
           <ProductComponent key={p.id} p={p} scrollEnabled={true} />

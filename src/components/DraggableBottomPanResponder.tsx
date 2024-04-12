@@ -1,5 +1,13 @@
-import { useRef } from 'react'
-import { Animated, Dimensions, PanResponder, Platform, StyleSheet, View } from 'react-native'
+import { useRef, useState } from 'react'
+import {
+  Animated,
+  Dimensions,
+  PanResponder,
+  Platform,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height
 const WINDOW_WIDTH = Dimensions.get('window').width
@@ -11,14 +19,11 @@ const MAX_DOWNWARD_TRANSLATE_Y = 0
 const DRAG_THRESHOLD = 50
 type DraggableBottomPanResponderProps = {
   children?: React.ReactNode
-  callbackOpen: (isOpen: boolean) => void
 }
-const DraggableBottomPanResponder = ({
-  children,
-  callbackOpen,
-}: DraggableBottomPanResponderProps) => {
+const DraggableBottomPanResponder = ({ children }: DraggableBottomPanResponderProps) => {
   const animatedValue = useRef(new Animated.Value(0)).current
   const lastGestureDy = useRef(0)
+  const [isHiddenBottom, setIsHiddenBottom] = useState(false)
 
   const bottomSheetAnimation = {
     transform: [
@@ -63,14 +68,19 @@ const DraggableBottomPanResponder = ({
   ).current
   const springAnimation = (direction: 'up' | 'down') => {
     lastGestureDy.current = direction === 'down' ? MAX_DOWNWARD_TRANSLATE_Y : MAX_UPWARD_TRANSLATE_Y
-    callbackOpen(direction === 'up')
+    setIsHiddenBottom(direction === 'up')
     Animated.spring(animatedValue, {
       toValue: lastGestureDy.current,
       useNativeDriver: true,
     }).start()
   }
   return (
-    <View style={styles.container}>
+    <View style={isHiddenBottom ? styles.containerAbsolute : styles.containerRelative}>
+      {isHiddenBottom && (
+        <TouchableWithoutFeedback onPress={() => springAnimation('down')} style={styles.overlay}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.draggableArea} {...panResponder.panHandlers}>
           <View style={styles.dragHandle} />
@@ -82,8 +92,24 @@ const DraggableBottomPanResponder = ({
 }
 export default DraggableBottomPanResponder
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  containerRelative: {
+    flex: 0,
+    backgroundColor: 'transparent',
+    position: 'relative',
+  },
+  containerAbsolute: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    backgroundColor: '#000',
+    opacity: 0.5,
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
   },
   bottomSheet: {
     position: 'absolute',

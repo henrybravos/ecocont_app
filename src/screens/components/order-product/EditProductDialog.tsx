@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { TextInput } from 'react-native-paper'
+import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
+import { IconButton, TextInput } from 'react-native-paper'
 
 import Text from '@components/Text'
 import { Dialog } from '@components/paper'
@@ -64,56 +64,51 @@ const ProductEditDialog = () => {
       }}
       cancelCallback={ctx.handleProductSelected()}
       confirmCallback={handleConfirmEdit}
-      title={`EDITAR:`}
       visible={visibleEdit}
       style={{ backgroundColor: '#fff' }}
     >
-      <Text align="justify" marginBottom={16}>
-        {ctx.productSelected?.movement?.priceDetail?.name}
-      </Text>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            mode="outlined"
-            dense
-            label="Cant."
-            value={quantityPrice.quantityStr}
-            onChangeText={handleUpdateQuantity}
-            left={
-              <TextInput.Icon
-                mode="contained-tonal"
-                size={18}
-                icon="minus"
-                onPress={minusQuantity}
-              />
-            }
-            right={
-              <TextInput.Icon mode="contained-tonal" size={18} icon="plus" onPress={plusQuantity} />
-            }
-          />
+      <View>
+        <Text align="justify" marginBottom={16} bold>
+          {ctx.productSelected?.movement?.priceDetail?.name}
+        </Text>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <IconButton mode="contained-tonal" size={14} icon="minus" onPress={minusQuantity} />
+            <TextInput
+              mode="outlined"
+              dense
+              label="Cant."
+              value={quantityPrice.quantityStr}
+              keyboardType="numeric"
+              onChangeText={handleUpdateQuantity}
+              style={{ flex: 1 }}
+            />
+            <IconButton mode="contained-tonal" size={14} icon="plus" onPress={plusQuantity} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TextInput
+              mode="outlined"
+              dense
+              label="Precio"
+              value={quantityPrice.priceStr}
+              keyboardType="numeric"
+              onChangeText={handleUpdatePrice}
+              left={<TextInput.Affix text={ctx.order?.currency?.name} />}
+            />
+          </View>
         </View>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            mode="outlined"
-            dense
-            label="Precio"
-            value={quantityPrice.priceStr}
-            onChangeText={handleUpdatePrice}
-            left={<TextInput.Affix text={ctx.order?.currency?.name} />}
-          />
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <View style={{ flex: 1 }} />
-        <View style={{ flex: 1 }}>
-          <TextInput
-            mode="outlined"
-            dense
-            label="Can. x Precio"
-            editable={false}
-            value={isNaN(subTotalNumber) ? '0' : subTotal}
-            left={<TextInput.Affix text={ctx.order?.currency.name} />}
-          />
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <TextInput
+              mode="outlined"
+              dense
+              label="Can. x Precio"
+              editable={false}
+              value={isNaN(subTotalNumber) ? '0' : subTotal}
+              left={<TextInput.Affix text={ctx.order?.currency.name} />}
+            />
+          </View>
         </View>
       </View>
     </Dialog>

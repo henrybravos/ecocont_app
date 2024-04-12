@@ -29,7 +29,6 @@ const useOrderSales = (point: AttentionPoint) => {
   const [isLoadingCategories, categories, fetchCategories] = fetchApi(ProductService.getCategories)
   const [isLoadingOrderSales, order, fetchOrder] = fetchApi(OrderSalesService.getDetailUserActive)
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
-  const [isOpenOrderCart, setIsOpenOrder] = useState(false)
   const [categoryIdSelected, setCategoryIdSelected] = useState<string>('TOP')
 
   useEffect(() => {
@@ -147,7 +146,6 @@ const useOrderSales = (point: AttentionPoint) => {
     const movementStringToSave = JSON.stringify(productOrders)
     return movementStringExist !== movementStringToSave
   }, [order?.movementOrder, productOrders])
-  const callbackOpenCart = (status: boolean) => setIsOpenOrder(status)
   const handleSelectCategory = (categoryId: string) => () => {
     setCategoryIdSelected(categoryId)
     if (categoryId === 'TOP') {
@@ -163,7 +161,6 @@ const useOrderSales = (point: AttentionPoint) => {
   return {
     isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch || isLoadingProductsCategory,
     isLoadingCategories,
-    isOpenOrderCart,
     isLoadingOrderSales,
     isDisplayButtonConfirm,
     order,
@@ -175,13 +172,13 @@ const useOrderSales = (point: AttentionPoint) => {
     categoryIdSelected,
     productSelected,
 
-    callbackOpenCart,
     handleExistInCart,
     handleSearchProductApi,
     handleUpdateProductToCart,
     handleRemoveProductFromCart,
     handleSelectCategory,
     handleProductSelected,
+    fetchProductsTop,
   }
 }
 
