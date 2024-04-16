@@ -100,6 +100,11 @@ export type ProductApi = {
     code: string
     name: string
   }
+  tIGV: {
+    id: string
+    codigo: string
+    descripcion: string
+  }
 }
 export type MovementOrderApi = {
   id: string
@@ -142,7 +147,7 @@ export type ProductResponseApi = {
   descripcion: string
   precio_unitario: number
   valor_unitario: number
-  icbper: boolean
+  icbper: number
   codigo_sunat: string
   medida: {
     id: string

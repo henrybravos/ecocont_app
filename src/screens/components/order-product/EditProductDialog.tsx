@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
+import { View } from 'react-native'
 import { IconButton, TextInput } from 'react-native-paper'
 
 import Text from '@components/Text'
 import { Dialog } from '@components/paper'
 
-import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 import { formatNumber } from '@utils/scripts'
 

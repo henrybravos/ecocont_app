@@ -1,7 +1,7 @@
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 
 import ProductComponent from '@screens/components/order-product/Product'
-import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 const ProductListOrderSales = () => {
   const ctx = useOrderSalesContext()

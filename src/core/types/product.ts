@@ -26,7 +26,7 @@ export type Product = {
   code: string
   stock: number
   image: string
-  icbper: boolean
+  icbper: number
   igvType: string
   barcode: string
   isCombo: boolean

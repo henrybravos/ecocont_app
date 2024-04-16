@@ -21,6 +21,11 @@ export const productOrderAdapter = (product: ProductApi): Partial<Product> => {
     pcgeSales: product.pcgeVenta,
     sunatCode: product.codigo_sunat,
     description: product.descripcion,
+    tIGV: {
+      code: product.tIGV.codigo,
+      description: product.tIGV.descripcion,
+      id: product.tIGV.id,
+    },
     measurementUnit: measurementUnitAdapter(product.medida),
   }
 }

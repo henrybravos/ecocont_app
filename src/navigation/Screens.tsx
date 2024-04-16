@@ -7,11 +7,15 @@ import { AreaSales, Login, OrderSales } from '@screens/index'
 
 import { useAppData, useScreenOptions } from '@hooks/index'
 
-import { RootStackParamList, SCREENS } from '@constants/types/navigation'
+import { RootStackParamList, SCREENS, StackNavigation } from '@constants/types/navigation'
 
 const Stack = createStackNavigator<RootStackParamList>()
 
 const Home = () => {
+  const navigation = useNavigation<StackNavigation>()
+  useEffect(() => {
+    navigation.navigate(SCREENS.AREA_SALES)
+  }, [])
   return (
     <View>
       <Text>Falta control de roles, por favor navegue por el menú</Text>
@@ -38,7 +42,6 @@ export default () => {
             component={AreaSales}
             options={{ title: 'Zonas de atención' }}
           />
-          <Stack.Screen name={SCREENS.HOME} component={Home} options={{ title: 'Inicio' }} />
         </Fragment>
       )}
       <Stack.Screen
