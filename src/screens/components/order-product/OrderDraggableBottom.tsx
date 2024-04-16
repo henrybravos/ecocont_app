@@ -1,6 +1,6 @@
 import { MotiView } from 'moti'
 import { ScrollView } from 'react-native-gesture-handler'
-import { Button, ButtonProps, Divider, ProgressBar } from 'react-native-paper'
+import { Button, ButtonProps, Divider, ProgressBar, Snackbar } from 'react-native-paper'
 
 import Block from '@components/Block'
 import DraggableBottomPanResponder from '@components/DraggableBottomPanResponder'
@@ -8,7 +8,7 @@ import Text from '@components/Text'
 import { AnimatedText } from '@components/animated'
 
 import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrder'
-import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 import { formatNumber } from '@utils/scripts'
 
@@ -39,15 +39,13 @@ const HeaderCartShopping = () => {
         </Text>
         <AnimatedText label={formatNumber(ctx.totalOrder)} />
       </Block>
-      {ctx.isDisplayButtonConfirm && (
+      {ctx.isDisplayButtonConfirm && !ctx.isLoadingOrderSales && !ctx.isLoadingSaveInvoice && (
         <OrderSaveConfirmButton
           buttonColor="#5c84ff"
           elevation={5}
           mode="elevated"
           textColor="#fff"
-          onPress={() => {
-            alert('next to implement')
-          }}
+          onPress={ctx.createOrUpdateOrder}
         />
       )}
     </Block>
@@ -79,6 +77,7 @@ const OrderDraggableBottom = () => {
     <DraggableBottomPanResponder>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
         {ctx.isLoadingOrderSales && <ProgressBar indeterminate />}
+        {ctx.isLoadingSaveInvoice && <ProgressBar indeterminate />}
         <HeaderCartShopping />
         <Divider bold />
         <Divider bold />

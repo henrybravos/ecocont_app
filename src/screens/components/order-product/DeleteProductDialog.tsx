@@ -1,7 +1,7 @@
 import Text from '@components/Text'
 import { Dialog } from '@components/paper'
 
-import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 const DeleteProductDialog = () => {
   const ctx = useOrderSalesContext()

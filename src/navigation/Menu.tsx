@@ -67,14 +67,16 @@ const ScreensStack = () => {
 /* custom drawer menu */
 const DrawerContentCustom = (props: DrawerContentComponentProps) => {
   const { navigation } = props
-  const { isDark, handleChangeMode, handleClearUserAuth, userAuth } = useAppData()
+  const { isDark, handleClearUserAuth, userAuth } = useAppData()
   const { colors, gradients, sizes, icons } = useTheme()
   const isAuth = !!userAuth?.auth?.authentication
   const labelColor = isDark ? colors.white : colors.text
   const state = navigation.getState()
   const route = state.routes[state.index]
-  const name = route.state?.routes[route.state.index || 0].name || isAuth ? 'Home' : 'Login'
-
+  const name =
+    route.state?.routes[route.state.index || 0].name || isAuth
+      ? route.state?.routes[route.state.index || 0].name
+      : 'Login'
   const handleNavigation = useCallback(
     (to: string) => {
       navigation.navigate(to)
@@ -82,16 +84,15 @@ const DrawerContentCustom = (props: DrawerContentComponentProps) => {
     [navigation],
   )
   const screens = [
-    { name: SCREENS.HOME, to: SCREENS.HOME, icon: icons.home },
     {
       name: 'Zonas',
       to: SCREENS.AREA_SALES,
-      icon: icons.home,
+      icon: icons.warning,
     },
     {
       name: 'Pedidos',
       to: SCREENS.ORDER_SALES,
-      icon: icons.home,
+      icon: icons.check,
     },
   ]
 
@@ -161,11 +162,6 @@ const DrawerContentCustom = (props: DrawerContentComponentProps) => {
           marginVertical={sizes.sm}
           gradient={gradients.menu}
         />
-
-        <Block row justify="space-between" marginTop={sizes.sm}>
-          <Text color={labelColor}>Mode</Text>
-          <Switch checked={isDark} onPress={handleChangeMode} />
-        </Block>
 
         <Button
           row

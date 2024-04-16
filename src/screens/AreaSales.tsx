@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { StyleSheet, TouchableHighlight } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
@@ -19,14 +20,15 @@ import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 import SkeletonAttentionPoints from './components/attention-points/SkeletonAttentionPoints'
 
-const AttentionPointComponent = ({ point }: { point: AttentionPoint }) => {
+type AttentionPointComponentProps = { point: AttentionPoint; checkout: Checkout }
+const AttentionPointComponent = ({ point, checkout }: AttentionPointComponentProps) => {
   const theme = useTheme()
   const navigation = useNavigation<StackNavigation>()
   const isOccupied = !!point.orderId
   const styleStatus = isOccupied ? styles.pointOccupied : styles.pointAvailable
   const icon = !isOccupied ? 'circle-outline' : 'circle-slice-8'
   const navigateToOrder = () => {
-    navigation.navigate(SCREENS.ORDER_SALES, point)
+    navigation.navigate(SCREENS.ORDER_SALES, { point, checkout })
   }
   return (
     <TouchableHighlight
@@ -63,12 +65,16 @@ const AreaSales = () => {
   useEffect(() => {
     fetchUserDetail()
   }, [])
-
   useEffect(() => {
     if (userSales && userSales.checkouts.length > 0) {
       setCheckoutSelected(userSales.checkouts[0])
     } else {
       setCheckoutSelected(null)
+    }
+    if (userSales && userSales.areas.length > 0) {
+      setAreaSelected(userSales.areas[0])
+    } else {
+      setAreaSelected(null)
     }
   }, [userSales?.checkouts.length])
   useEffect(() => {
@@ -93,15 +99,17 @@ const AreaSales = () => {
   const handleAreaSelected = (area: SalesArea | null) => {
     setAreaSelected(area)
   }
-  const renderPint = ({ item }: { item: AttentionPoint }) => (
-    <AttentionPointComponent point={item} />
+  const renderAttentionPoint = ({ item }: { item: AttentionPoint }) => (
+    <AttentionPointComponent point={item} checkout={checkoutSelected!} />
   )
   const checkouts = userSales?.checkouts || []
   const isCashier = !!userSales?.areas.length
   const areas = isCashier ? userSales?.areas || [] : checkoutSelected?.areas || []
+
   const isLoading = isLoadingUser || isLoadingPoints
   return (
     <Block marginVertical={4} justify="flex-start">
+      <StatusBar style="dark" />
       <Block row flex={0} marginVertical={4}>
         {isLoading && <ProgressBar indeterminate visible={isLoading} />}
         {checkouts.length > 0 && (
@@ -130,14 +138,16 @@ const AreaSales = () => {
           </Block>
         )}
       </Block>
+
       {!isLoading ? (
         <FlatList
           data={attentionPoints || []}
           columnWrapperStyle={styles.listAttention}
           numColumns={2}
-          renderItem={renderPint}
+          renderItem={renderAttentionPoint}
           ListEmptyComponent={
             <EmptyComponent
+              visible
               message={`No existen puntos de atención ${areaSelected?.description && `en ${areaSelected.description}`}`}
             />
           }

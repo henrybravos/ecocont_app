@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { AuthService } from '@core/index'
+import { AuthService } from '@core/graphql'
 import { UserAuth } from '@core/types'
 
 import client from '@utils/apollo'

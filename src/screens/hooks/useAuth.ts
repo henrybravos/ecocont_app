@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useState } from 'react'
 
-import { AuthService } from '@core/index'
+import { AuthService } from '@core/graphql'
 
 import { useFetchApi } from '@hooks/index'
 import { useAppData } from '@hooks/useAppData'
@@ -10,10 +10,10 @@ import * as regex from '@constants/regex'
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 const initAuth = {
-  email: 'henry123@gmail.com',
-  password: '123456',
-  invalidEmail: false,
-  invalidPassword: false,
+  email: '',
+  password: '',
+  invalidEmail: true,
+  invalidPassword: true,
 }
 
 export const useAuth = () => {
@@ -44,7 +44,7 @@ export const useAuth = () => {
 
   const navigateToHome = () => {
     setTimeout(() => {
-      navigate(SCREENS.HOME)
+      navigate(SCREENS.AREA_SALES)
     }, 500)
   }
   const handleSignIn = useCallback(() => {

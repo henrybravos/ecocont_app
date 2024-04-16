@@ -1,4 +1,4 @@
-import { Product } from '@core/types/product'
+import { Product, ProductVariant } from '@core/types/product'
 import { Sales } from '@core/types/sales'
 
 export type TypeInvoice = {
@@ -30,6 +30,7 @@ export type MovementOrder = {
     id: string
     name: string
   }
+  variantSelected?: ProductVariant
   product: Partial<Product>
 }
 export type OrderSales = {

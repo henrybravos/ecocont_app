@@ -34,6 +34,7 @@ const UserSalesService = {
                 codigo
                 local_id
                 control_mesa
+                descripcion
                 mesas {
                   id
                   codigo
@@ -77,7 +78,7 @@ const UserSalesService = {
         fetchPolicy: 'no-cache',
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
-      .then((response) => salesAttentionPointResponseAdapter(response.data)),
+      .then((response) => salesAttentionPointResponseAdapter(areaId, response.data)),
 }
 
 export default UserSalesService

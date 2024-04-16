@@ -5,7 +5,8 @@ import OrderSalesService from '@core/graphql/OrderSalesService'
 import ProductService from '@core/graphql/ProductService'
 import { MovementOrder } from '@core/types/order-sales'
 import { Product } from '@core/types/product'
-import { AttentionPoint } from '@core/types/user'
+import { Invoice } from '@core/types/sales'
+import { AttentionPoint, Checkout } from '@core/types/user'
 
 import fetchApi from '@hooks/useFetchApi'
 
@@ -15,7 +16,7 @@ type ProductSelected = {
   mode?: 'edit' | 'delete'
   movement?: Partial<MovementOrder>
 }
-const useOrderSales = (point: AttentionPoint) => {
+const useOrderSales = (point: AttentionPoint, checkout: Checkout) => {
   const [products, setProducts] = useState<Product[]>([])
   const openSwipeProduct = useRef<Swipeable | null>(null)
   const [searchText, setSearchText] = useState<string>('')
@@ -30,12 +31,24 @@ const useOrderSales = (point: AttentionPoint) => {
     ProductService.getCategoryProducts,
   )
   const [isLoadingCategories, categories, fetchCategories] = fetchApi(ProductService.getCategories)
-  const [isLoadingOrderSales, order, fetchOrder] = fetchApi(OrderSalesService.getDetailUserActive)
+  const [isLoadingOrderSales, order, fetchOrder, _, resetOrder] = fetchApi(
+    OrderSalesService.getDetailUserActive,
+  )
+  const [
+    isLoadingSaveInvoice,
+    invoiceCreateId,
+    fetchSaveInvoice,
+    errorSaveUpdate,
+    resetSaveInvoice,
+  ] = fetchApi(OrderSalesService.saveInvoice)
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [categoryIdSelected, setCategoryIdSelected] = useState<string>('TOP')
-
   useEffect(() => {
-    if (point.orderId) fetchOrder({ orderId: point.orderId })
+    if (point.orderId) {
+      fetchOrder({ orderId: point.orderId })
+    } else {
+      resetOrder()
+    }
     if (point.id) {
       fetchProducts()
       fetchCategories()
@@ -68,8 +81,17 @@ const useOrderSales = (point: AttentionPoint) => {
     if (order) {
       const movementsCopy = order.movementOrder?.map((m) => ({ ...m })) || []
       setProductOrders(movementsCopy)
+    } else {
+      setProductOrders([])
     }
   }, [order])
+  useEffect(() => {
+    if (invoiceCreateId) {
+      fetchOrder({
+        orderId: point.orderId || invoiceCreateId,
+      })
+    }
+  }, [invoiceCreateId])
   if (!point.id) return
   const fetchProducts = () => {
     if (searchText.trim().length === 0) {
@@ -149,7 +171,7 @@ const useOrderSales = (point: AttentionPoint) => {
         newProductOrders[existIndex].unitPrice = unitPrice
         setProductOrders(newProductOrders)
       } else {
-        const newItem = {
+        const newItem: Partial<MovementOrder> = {
           product,
           priceDetail: {
             id: priceDetails.id || '',
@@ -157,6 +179,8 @@ const useOrderSales = (point: AttentionPoint) => {
           },
           quantity,
           unitPrice,
+          icbper: product.icbper,
+          variantSelected: product.variants?.find((v) => v.id === priceDetails.id),
         }
         setProductOrders([...productOrders, newItem])
       }
@@ -186,12 +210,51 @@ const useOrderSales = (point: AttentionPoint) => {
   const handleOpenProductCartActions = (swipeable: RefObject<Swipeable>) => {
     openSwipeProduct.current = swipeable.current
   }
+  const createOrUpdateOrder = () => {
+    const itemsOlder = order?.movementOrder || []
+    const itemsNew = productOrders
+    const items: { old: MovementOrder; new: MovementOrder }[] = itemsNew.map((item) => {
+      const itemOld = itemsOlder.find((i) => i.priceDetail?.id === item.priceDetail?.id)
+      return {
+        old: (itemOld || { ...item }) as MovementOrder,
+        new: item as MovementOrder,
+      }
+    })
+
+    const invoice: Invoice = {
+      additionalInformation: '',
+      currencyType: order?.currency.code || 'PEN',
+      customer: {
+        id: 'b97b197c-a5f1-11ec-9502-00505600d6df',
+      },
+      documentType: '99',
+      dueDate: null,
+      law_31556: false,
+      number: '#',
+      series: 'V',
+      purchaseOrder: '',
+      operationType: '0101',
+      extraData: {
+        checkoutId: checkout?.id,
+        pointAttentionId: point.id,
+        orderId: order?.id,
+        salesId: order?.id,
+        areaId: point.areaId,
+      },
+      items,
+    }
+    fetchSaveInvoice({
+      invoice,
+      orderId: order?.id || '',
+    })
+  }
 
   return {
     isLoadingProducts: isLoadingProductsTop || isLoadingProductsSearch || isLoadingProductsCategory,
     isLoadingCategories,
     isLoadingOrderSales,
     isDisplayButtonConfirm,
+    isLoadingSaveInvoice,
     order,
     point,
     products,
@@ -201,6 +264,8 @@ const useOrderSales = (point: AttentionPoint) => {
     categoryIdSelected,
     productSelected,
     searchText,
+    errorSaveUpdate,
+    invoiceCreateId,
 
     handleExistInCart,
     handleSearchProductApi,
@@ -208,8 +273,10 @@ const useOrderSales = (point: AttentionPoint) => {
     handleRemoveProductFromCart,
     handleSelectCategory,
     handleProductSelected,
-    fetchProducts,
     handleOpenProductCartActions,
+    createOrUpdateOrder,
+    fetchProducts,
+    resetSaveInvoice,
   }
 }
 

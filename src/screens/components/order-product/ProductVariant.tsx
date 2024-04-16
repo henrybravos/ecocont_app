@@ -8,7 +8,7 @@ import Block from '@components/Block'
 import Image from '@components/Image'
 import Text from '@components/Text'
 
-import { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 import { Product } from '@core/types/product'
 
@@ -47,6 +47,7 @@ const ProductVariantComponent = ({ item, product }: ProductVariantComponentProps
     setVisibleActions(true)
   }
   const updateOrPushToCart = () => {
+    console.log('product', product)
     toggleVisibleActions()
     ctx.handleUpdateProductToCart(
       {

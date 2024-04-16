@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import { useMemo } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
-import { Chip, ChipProps } from 'react-native-paper'
+import { useEffect, useMemo } from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { Chip, ChipProps, Snackbar } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
@@ -16,20 +16,12 @@ import OrderCartDraggable from '@screens/components/order-product/OrderDraggable
 import ProductListOrderSales from '@screens/components/order-product/ProductListOrderSales'
 import SkeletonCategories from '@screens/components/order-product/SkeletonCategories'
 import SkeletonProducts from '@screens/components/order-product/SkeletonProducts'
-import OrderSalesProvider, { useOrderSalesContext } from '@screens/hooks/order-sales/order-context'
+import OrderSalesProvider, {
+  useOrderSalesContext,
+} from '@screens/hooks/order-sales/useOrderSalesContext'
 
 import { COLORS } from '@constants/light'
-import { StackNavigation } from '@constants/types/navigation'
-
-const pointDefault = {
-  areaId: '',
-  code: '01',
-  description: 'MESA1',
-  id: 'b7a98540-9659-11ec-b4c8-02a781d03422',
-  orderId: 'd4b184aa-e4bb-11ee-bf4a-000c2996f016',
-  x: 21,
-  y: 0,
-}
+import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 type CategoryProps = ChipProps & {}
 const Category = (props: CategoryProps) => {
@@ -94,17 +86,26 @@ const OrderSalesManagement = () => {
       <OrderCartDraggable />
       <EditProductDialog />
       <DeleteProductDialog />
+      <Snackbar visible={!!ctx.invoiceCreateId} onDismiss={ctx.resetSaveInvoice}>
+        Cambios guardados correctamente
+      </Snackbar>
     </Block>
   )
 }
 const OrderSalesScreen = () => {
-  const { getState } = useNavigation<StackNavigation>()
+  const { getState, navigate } = useNavigation<StackNavigation>()
   const state = getState()
-  const pointParam = state.routes[state.index].params || pointDefault
+  const params = state.routes[state.index].params
+  useEffect(() => {
+    if (!params?.point) {
+      navigate(SCREENS.AREA_SALES)
+    }
+  }, [params])
+  if (!params?.point) return null
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="dark" />
-      <OrderSalesProvider point={pointParam}>
+      <OrderSalesProvider point={params.point} checkout={params.checkout}>
         <OrderSalesManagement />
       </OrderSalesProvider>
     </SafeAreaView>
