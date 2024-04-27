@@ -1,3 +1,4 @@
+import { Observable } from 'apollo-client/util/Observable'
 import gql from 'graphql-tag'
 
 import {
@@ -5,14 +6,14 @@ import {
   salesAttentionPointResponseAdapter,
 } from '@core/adapters/sales.adapter'
 
-import client from '@utils/apollo'
+import { getClient } from '@utils/apollo'
 import { getAuthenticationStorage } from '@utils/scripts'
 
-import { AttentionPointResponseApi, UserSalesResponseApi } from '../types'
+import { AttentionPointApi, AttentionPointResponseApi, UserSalesResponseApi } from '../types'
 
 const UserSalesService = {
   getDetailUserActive: async () =>
-    client
+    getClient()
       .query<UserSalesResponseApi>({
         query: gql`
           query getUserActive {
@@ -55,7 +56,7 @@ const UserSalesService = {
         return salesActiveUserResponseAdapter(response.data)
       }),
   getAttentionPoints: async ({ areaId }: { areaId: string }) =>
-    client
+    getClient()
       .query<AttentionPointResponseApi>({
         query: gql`
           query mesas($zona: String!) {
@@ -79,6 +80,31 @@ const UserSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => salesAttentionPointResponseAdapter(areaId, response.data)),
+  subscriptionPointSaleByZone: ({ areaId }: { areaId: string }) => {
+    const client = getClient()
+    return client.subscribe<{
+      updateMesaByZona: AttentionPointApi
+    }>({
+      query: gql`
+        subscription updateMesaByZona($zona_id: String!) {
+          updateMesaByZona(zona_id: $zona_id) {
+            id
+            zone_id
+            codigo
+            descripcion
+            x
+            y
+            pedido_id
+            pedido {
+              created_at
+            }
+          }
+        }
+      `,
+      variables: { zona_id: areaId },
+      fetchPolicy: 'no-cache',
+    })
+  },
 }
 
 export default UserSalesService
