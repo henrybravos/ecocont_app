@@ -6,12 +6,12 @@ import { OrderSalesResponseApi } from '@core/types'
 import { CreateOrUpdatePedidoResponse } from '@core/types/api-sales'
 import { Invoice } from '@core/types/sales'
 
-import client from '@utils/apollo'
+import { getClient } from '@utils/apollo'
 import { getAuthenticationStorage } from '@utils/scripts'
 
 const OrderSalesService = {
   getDetailUserActive: async ({ orderId }: { orderId: string }) =>
-    client
+    getClient()
       .query<OrderSalesResponseApi>({
         query: gql`
           query order($id: String!) {
@@ -91,7 +91,7 @@ const OrderSalesService = {
     const invoiceToApi = salesToApiRequest(invoice)
     //console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
 
-    return client
+    return getClient()
       .query<CreateOrUpdatePedidoResponse>({
         query: gql`
           mutation createOrUpdatePedido($id: String, $venta: JSON!) {

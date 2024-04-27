@@ -40,6 +40,9 @@ export type AttentionPointApi = {
   y: number
   descripcion: string
   pedido_id: string
+  pedido?: {
+    created_at: string
+  }
 }
 export type SalesAreaApi = {
   id: string

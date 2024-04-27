@@ -1,8 +1,6 @@
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import ApolloClient from 'apollo-client'
 import gql from 'graphql-tag'
 
-import client from '@utils/apollo'
+import { getClient } from '@utils/apollo'
 
 import { getAuthenticationStorage } from '../../utils/scripts'
 import { loginResponseFromApiAdapter } from '../adapters/auth.adapter'
@@ -15,7 +13,7 @@ type LoginParams = {
 
 const AuthService = {
   createToken: (login: LoginParams) =>
-    client
+    getClient()
       .query<AuthResponseApi>({
         query: gql`
           query createToken($email: String!, $password: String!) {
@@ -49,7 +47,7 @@ const AuthService = {
         return loginResponseFromApiAdapter(response.data)
       }),
   refreshToken: async ({ authentication }: { authentication: string }) =>
-    client.query<AuthRefreshResponseApi>({
+    getClient().query<AuthRefreshResponseApi>({
       query: gql`
         query refreshToken($refresh: String!) {
           refresh(refresh: $refresh) {

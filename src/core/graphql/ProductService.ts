@@ -11,7 +11,7 @@ import {
   ProductTopResponseApi,
 } from '@core/types'
 
-import client from '@utils/apollo'
+import { getClient } from '@utils/apollo'
 import { getAuthenticationStorage } from '@utils/scripts'
 
 const gqlProducts = `
@@ -55,7 +55,7 @@ const gqlProducts = `
 `
 const ProductService = {
   getTopProducts: async () => {
-    return client
+    return getClient()
       .query<ProductTopResponseApi>({
         query: gql`
           {
@@ -71,7 +71,7 @@ const ProductService = {
       })
   },
   getSearchProducts: async ({ search }: { search: string }) => {
-    return client
+    return getClient()
       .query<ProductSearchResponseApi>({
         query: gql`
           query productosbyParam($param: String!) {
@@ -87,7 +87,7 @@ const ProductService = {
       })
   },
   getCategoryProducts: async ({ categoryId }: { categoryId: string }) => {
-    return client
+    return getClient()
       .query<ProductByCategoryResponseApi>({
         query: gql`
           query productsByCategoriaId($categoria_id: String!) {
@@ -103,7 +103,7 @@ const ProductService = {
       })
   },
   getCategories: async () => {
-    return client
+    return getClient()
       .query<CategoryResponseApi>({
         query: gql`
           {

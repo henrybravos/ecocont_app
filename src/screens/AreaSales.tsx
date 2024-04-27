@@ -10,11 +10,14 @@ import EmptyComponent from '@components/EmptyComponent'
 import Text from '@components/Text'
 import { DropdownList } from '@components/paper'
 
+import { salesAttentionPointAdapter } from '@core/adapters/sales.adapter'
 import UserSalesService from '@core/graphql/UserSalesService'
 import { AttentionPoint, Checkout, SalesArea } from '@core/types/user'
 
 import { useFetchApi } from '@hooks/index'
 import useTheme from '@hooks/useTheme'
+
+import { getClient } from '@utils/apollo'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
@@ -53,15 +56,61 @@ const AttentionPointComponent = ({ point, checkout }: AttentionPointComponentPro
     </TouchableHighlight>
   )
 }
+
 const AreaSales = () => {
   const [checkoutSelected, setCheckoutSelected] = useState<Checkout | null>(null)
   const [areaSelected, setAreaSelected] = useState<SalesArea | null>(null)
-  const [isLoadingPoints, attentionPoints, fetchAttentionPoints] = useFetchApi(
+  const [attentionPoints, setAttentionPoints] = useState<AttentionPoint[]>([])
+  const [isLoadingPoints, attentionPointsResponse, fetchAttentionPoints] = useFetchApi(
     UserSalesService.getAttentionPoints,
   )
   const [isLoadingUser, userSales, fetchUserDetail] = useFetchApi(
     UserSalesService.getDetailUserActive,
   )
+  /*const { data, error, loading } = useSubscription<AttentionPoint>(GET_AREA, {
+    variables: { zona_id: '5648a442-41cd-11ec-9aa4-0289b1985170' },
+  })
+  console.log({ data })*/
+  useEffect(() => {
+    setAttentionPoints(attentionPointsResponse ?? [])
+  }, [attentionPointsResponse])
+  useEffect(() => {
+    if (!areaSelected || !areaSelected.id) return
+    console.log('areaSelected', areaSelected.id)
+    const subscription = UserSalesService.subscriptionPointSaleByZone({
+      areaId: areaSelected?.id || '',
+    }).subscribe({
+      next: (stream) => {
+        console.log('stream', stream.data?.updateMesaByZona)
+        if (stream.data?.updateMesaByZona) {
+          const attentionPoint = salesAttentionPointAdapter(stream.data.updateMesaByZona)
+          attentionPoint.areaId = areaSelected.id
+          const newAttentionPoints = attentionPoints.map((att) =>
+            att.id === attentionPoint.id ? attentionPoint : att,
+          )
+          console.log({
+            attentionPoint,
+          })
+
+          setAttentionPoints(newAttentionPoints)
+        }
+      },
+      error: (error) => {
+        console.log('error', error)
+      },
+      start: (dd) => {
+        console.log('start', dd)
+      },
+      complete() {
+        console.log('complete')
+      },
+    })
+    return () => {
+      console.log('unsubscribe')
+      subscription.unsubscribe()
+    }
+  }, [areaSelected?.id, attentionPoints])
+
   useEffect(() => {
     fetchUserDetail()
   }, [])
