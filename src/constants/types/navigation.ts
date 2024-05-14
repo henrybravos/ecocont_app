@@ -6,6 +6,8 @@ export enum SCREENS {
   LOGIN = 'Login',
   AREA_SALES = 'AreaSales',
   ORDER_SALES = 'OrderSales',
+  VIEWER_PDF = 'ViewerPdf',
+  CHECKPOINT = 'Checkpoint',
 }
 
 export type RootStackParamList = {
@@ -15,5 +17,10 @@ export type RootStackParamList = {
     checkout: Checkout
   }
   [SCREENS.LOGIN]: undefined
+  [SCREENS.VIEWER_PDF]: undefined
+  [SCREENS.CHECKPOINT]: {
+    point: AttentionPoint
+    checkout: undefined
+  }
 }
 export type StackNavigation = NavigationProp<RootStackParamList>

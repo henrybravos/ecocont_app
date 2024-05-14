@@ -17,8 +17,6 @@ import { AttentionPoint, Checkout, SalesArea } from '@core/types/user'
 import { useFetchApi } from '@hooks/index'
 import useTheme from '@hooks/useTheme'
 
-import { getClient } from '@utils/apollo'
-
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 import SkeletonAttentionPoints from './components/attention-points/SkeletonAttentionPoints'

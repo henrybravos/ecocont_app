@@ -10,7 +10,7 @@ const OrderSalesContext = createContext<OrderSalesType | null>(null)
 type OrderSalesProvider = {
   children: ReactElement
   point: AttentionPoint
-  checkout: Checkout
+  checkout?: Checkout
 }
 const OrderSalesProvider = (props: OrderSalesProvider) => {
   const order = useOrderSales(props.point, props.checkout)

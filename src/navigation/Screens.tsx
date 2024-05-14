@@ -1,24 +1,22 @@
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Fragment, useEffect } from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
-import { AreaSales, Login, OrderSales } from '@screens/index'
+import Text from '@components/Text'
+
+import PDFViewer from '@screens/components/viewer/PDFViewer'
+import { AreaSales, Checkpoint, Login, OrderSales } from '@screens/index'
 
 import { useAppData, useScreenOptions } from '@hooks/index'
 
-import { RootStackParamList, SCREENS, StackNavigation } from '@constants/types/navigation'
+import { RootStackParamList, SCREENS } from '@constants/types/navigation'
 
 const Stack = createStackNavigator<RootStackParamList>()
-
-const Home = () => {
-  const navigation = useNavigation<StackNavigation>()
-  useEffect(() => {
-    navigation.navigate(SCREENS.AREA_SALES)
-  }, [])
+const Hello = () => {
   return (
     <View>
-      <Text>Falta control de roles, por favor navegue por el menú</Text>
+      <Text>Hello</Text>
     </View>
   )
 }
@@ -30,6 +28,7 @@ export default () => {
   useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
   return (
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>
+      <Stack.Screen name={SCREENS.VIEWER_PDF} component={PDFViewer} />
       {auth?.authentication && (
         <Fragment>
           <Stack.Screen
@@ -41,6 +40,11 @@ export default () => {
             name={SCREENS.AREA_SALES}
             component={AreaSales}
             options={{ title: 'Zonas de atención' }}
+          />
+          <Stack.Screen
+            name={SCREENS.CHECKPOINT}
+            component={Checkpoint}
+            options={{ title: 'Caja', headerShown: false }}
           />
         </Fragment>
       )}

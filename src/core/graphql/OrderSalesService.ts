@@ -87,9 +87,9 @@ const OrderSalesService = {
       .then((response) => {
         return orderSalesResponseAdapter(response.data)
       }),
-  saveInvoice: async ({ orderId, invoice }: { orderId: string; invoice: Invoice }) => {
+  createUpdateOrder: async ({ orderId, invoice }: { orderId: string; invoice: Invoice }) => {
     const invoiceToApi = salesToApiRequest(invoice)
-    //console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
+    console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
 
     return getClient()
       .query<CreateOrUpdatePedidoResponse>({
@@ -169,7 +169,38 @@ const OrderSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => {
-        console.log(response.data.createOrUpdatePedido.id)
+        console.log(response.data.createOrUpdatePedido)
+        return response.data.createOrUpdatePedido.id
+      })
+      .catch((error) => {
+        console.log({ error })
+        return null
+      })
+  },
+  saveInvoice: async ({ orderId, invoice }: { orderId: string; invoice: Invoice }) => {
+    const invoiceToApi = salesToApiRequest(invoice)
+    console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
+
+    return getClient()
+      .query<CreateOrUpdatePedidoResponse>({
+        query: gql`
+          mutation createOrUpdatePedido($id: String, $venta: JSON!) {
+            createOrUpdatePedido(id: $id, venta: $venta) {
+              apifact
+              external_id
+              file_name
+              api_fact
+              pdf_ruta
+            }
+          }
+        `,
+        variables: { id: orderId, venta: invoiceToApi },
+
+        fetchPolicy: 'no-cache',
+        context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
+      })
+      .then((response) => {
+        console.log(response.data.createOrUpdatePedido)
         return response.data.createOrUpdatePedido.id
       })
       .catch((error) => {

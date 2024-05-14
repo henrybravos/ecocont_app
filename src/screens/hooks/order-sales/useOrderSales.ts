@@ -8,7 +8,7 @@ import { Product } from '@core/types/product'
 import { Invoice } from '@core/types/sales'
 import { AttentionPoint, Checkout } from '@core/types/user'
 
-import fetchApi from '@hooks/useFetchApi'
+import { useFetchApi } from '@hooks/index'
 
 import { reduceSumMultiplyArray } from '@utils/scripts'
 
@@ -16,22 +16,24 @@ type ProductSelected = {
   mode?: 'edit' | 'delete'
   movement?: Partial<MovementOrder>
 }
-const useOrderSales = (point: AttentionPoint, checkout: Checkout) => {
+const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
   const [products, setProducts] = useState<Product[]>([])
   const openSwipeProduct = useRef<Swipeable | null>(null)
   const [searchText, setSearchText] = useState<string>('')
   const [productSelected, setProductSelected] = useState<ProductSelected>({})
-  const [isLoadingProductsTop, productsTop, fetchProductsTop] = fetchApi(
+  const [isLoadingProductsTop, productsTop, fetchProductsTop] = useFetchApi(
     ProductService.getTopProducts,
   )
-  const [isLoadingProductsSearch, productsSearch, fetchProductsSearch] = fetchApi(
+  const [isLoadingProductsSearch, productsSearch, fetchProductsSearch] = useFetchApi(
     ProductService.getSearchProducts,
   )
-  const [isLoadingProductsCategory, productsCategory, fetchProductsByCategory] = fetchApi(
+  const [isLoadingProductsCategory, productsCategory, fetchProductsByCategory] = useFetchApi(
     ProductService.getCategoryProducts,
   )
-  const [isLoadingCategories, categories, fetchCategories] = fetchApi(ProductService.getCategories)
-  const [isLoadingOrderSales, order, fetchOrder, _, resetOrder] = fetchApi(
+  const [isLoadingCategories, categories, fetchCategories] = useFetchApi(
+    ProductService.getCategories,
+  )
+  const [isLoadingOrderSales, order, fetchOrder, _, resetOrder] = useFetchApi(
     OrderSalesService.getDetailUserActive,
   )
   const [
@@ -40,7 +42,7 @@ const useOrderSales = (point: AttentionPoint, checkout: Checkout) => {
     fetchSaveInvoice,
     errorSaveUpdate,
     resetSaveInvoice,
-  ] = fetchApi(OrderSalesService.saveInvoice)
+  ] = useFetchApi(OrderSalesService.createUpdateOrder)
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [categoryIdSelected, setCategoryIdSelected] = useState<string>('TOP')
   useEffect(() => {
@@ -235,7 +237,7 @@ const useOrderSales = (point: AttentionPoint, checkout: Checkout) => {
       purchaseOrder: '',
       operationType: '0101',
       extraData: {
-        checkoutId: checkout?.id,
+        checkoutId: checkout?.id || '',
         pointAttentionId: point.id,
         orderId: order?.id,
         salesId: order?.id,

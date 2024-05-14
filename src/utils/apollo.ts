@@ -31,6 +31,7 @@ const getClient = () => {
           switch (error.statusCode) {
             case TOKEN_EXPIRED:
               console.log('El Token ha Expirado')
+              location.href = '/login'
               break
             case SESSION_IN_OTHER_DEVICE:
               console.log('Sesión iniciada en otro dispositivo')
