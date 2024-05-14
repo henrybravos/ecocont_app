@@ -194,8 +194,8 @@ export const salesToApiRequest = (invoice: Invoice): VentaApi => {
       total_descuento_nbi: 0,
       efectivo: {
         monto: totals.total_venta_info + '',
-        cf: '',
-        pcge_id: '',
+        cf: '6a58642c-41cd-11ec-9c6c-0289b1985170',
+        pcge_id: '89f57e04-3d7d-11ec-8c95-0289b1985170',
       },
       totalEfectivo: totals.total_venta_info,
       totalCredito: 0,
@@ -206,7 +206,7 @@ export const salesToApiRequest = (invoice: Invoice): VentaApi => {
     leyendas: [],
     informacion_adicional: '',
     extra: {
-      caja_id: invoice.extraData.checkoutId,
+      caja_id: invoice.extraData.checkoutId || 'cb828156-41cd-11ec-9419-0289b1985170',
       mesa_id: invoice.extraData.pointAttentionId,
       pedido_id: invoice.extraData.orderId,
       venta_id: invoice.extraData.salesId,

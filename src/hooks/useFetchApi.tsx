@@ -13,11 +13,11 @@ type IsLoading = boolean
  * @param {ApiFunctionWithArg<S, A>} apiFunction - The API function to be called.
  * @returns [IsLoading, S, MutateFunction<A>, Error, ResetData] - An array containing the loading state, fetched data, mutate function, error, and reset function.
  */
-export default function fetchApi<S, A>(
+export default function useFetchApi<S, A>(
   apiFunction: ApiFunctionWithArg<S, A>,
 ): [IsLoading, S, MutateFunction<A>, Error, ResetData]
 
-export default function fetchApi<S, A>(apiFunction: ApiFunctionWithArg<S, A>) {
+export default function useFetchApi<S, A>(apiFunction: ApiFunctionWithArg<S, A>) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<S | null>(null)

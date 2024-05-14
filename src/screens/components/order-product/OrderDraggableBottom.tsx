@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import { MotiView } from 'moti'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Button, ButtonProps, Divider, ProgressBar, Snackbar } from 'react-native-paper'
@@ -11,6 +12,8 @@ import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrd
 import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
 import { formatNumber } from '@utils/scripts'
+
+import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 type OrderSaveConfirmButtonProps = Omit<ButtonProps, 'children'> & {}
 const OrderSaveConfirmButton = (buttonProps: OrderSaveConfirmButtonProps) => {
@@ -73,6 +76,11 @@ const ProductListCartShopping = () => {
 
 const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
+  const navigation = useNavigation<StackNavigation>()
+
+  const navigateToCheckpoint = () => {
+    navigation.navigate(SCREENS.CHECKPOINT, { point: ctx.point, checkout: undefined })
+  }
   return (
     <DraggableBottomPanResponder>
       <Block paddingHorizontal={4} style={{ backgroundColor: '#fff' }} marginTop={24}>
@@ -82,6 +90,9 @@ const OrderDraggableBottom = () => {
         <Divider bold />
         <Divider bold />
         <ProductListCartShopping />
+        <Button onPress={navigateToCheckpoint} mode="contained" compact>
+          COBRAR
+        </Button>
       </Block>
     </DraggableBottomPanResponder>
   )
