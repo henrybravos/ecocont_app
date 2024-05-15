@@ -5,10 +5,7 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "image": "latest"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "android": {

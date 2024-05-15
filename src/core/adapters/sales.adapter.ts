@@ -5,8 +5,8 @@ import {
   SalesAreaApi,
   UserSalesResponseApi,
 } from '@core/types'
-import { VentaApi, VentaItemApi } from '@core/types/api-sales'
-import { Invoice } from '@core/types/sales'
+import { OperationResponse, VentaApi, VentaItemApi } from '@core/types/api-sales'
+import { Invoice, InvoiceResponse } from '@core/types/sales'
 import { AttentionPoint, Checkout, SalesArea, UserSales } from '@core/types/user'
 import { getTaxesAmounts, getTotalsInvoice } from '@core/utils/taxes'
 
@@ -212,5 +212,13 @@ export const salesToApiRequest = (invoice: Invoice): VentaApi => {
       venta_id: invoice.extraData.salesId,
       zona_id: invoice.extraData.areaId,
     },
+  }
+}
+
+export const invoiceResponseFromApi = (response: OperationResponse): InvoiceResponse => {
+  return {
+    downloadUrl: response.createOrUpdatePedido.pdf_ruta.data,
+    url: response.createOrUpdatePedido.pdf_ruta.data,
+    status: response.createOrUpdatePedido.pdf_ruta.status,
   }
 }

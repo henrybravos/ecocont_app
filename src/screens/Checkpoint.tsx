@@ -1,12 +1,25 @@
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Dimensions, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { Button, Divider, ProgressBar, Surface, Text, TextInput } from 'react-native-paper'
+import {
+  Button,
+  Dialog,
+  Divider,
+  PaperProvider,
+  Portal,
+  ProgressBar,
+  Surface,
+  Text,
+  TextInput,
+} from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Block from '@components/Block'
 import { RadioButtonGroup } from '@components/paper'
+
+import PDFViewer from '@screens/components/viewer/PDFViewer'
 
 import { OrderSalesService } from '@core/graphql'
 import { MovementOrder } from '@core/types/order-sales'
@@ -18,6 +31,8 @@ import { reduceSumMultiplyArray } from '@utils/scripts'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
+const height = Dimensions.get('window').height - 200
+const width = Dimensions.get('window').width
 enum PaymentType {
   BANK = 'BANK',
   CASH = 'CASH',
@@ -41,21 +56,16 @@ const CheckpointScreen = () => {
   const params = state.routes[state.index].params
   const [
     isLoadingSaveInvoice,
-    invoiceCreateId,
+    invoiceResponse,
     fetchSaveInvoice,
     errorSaveUpdate,
     resetSaveInvoice,
   ] = useFetchApi(OrderSalesService.saveInvoice)
-  const [isLoadingOrderSales, order, fetchOrder, _, resetOrder] = useFetchApi(
+  const urlInvoice = invoiceResponse?.url
+  const [isLoadingOrderSales, order, fetchOrder, _, __] = useFetchApi(
     OrderSalesService.getDetailUserActive,
   )
-  useEffect(() => {
-    if (invoiceCreateId) {
-      fetchOrder({
-        orderId: params?.point.orderId || invoiceCreateId,
-      })
-    }
-  }, [invoiceCreateId])
+
   useEffect(() => {
     if (!params?.point) {
       navigate(SCREENS.AREA_SALES)
@@ -72,7 +82,7 @@ const CheckpointScreen = () => {
   if (!params?.point) return <ProgressBar indeterminate visible />
   const createSales = () => {
     const itemsOlder = order?.movementOrder || []
-    const itemsNew = order.movementOrder
+    const itemsNew = order?.movementOrder
     const items: { old: MovementOrder; new: MovementOrder }[] = itemsNew.map((item) => {
       const itemOld = itemsOlder.find((i) => i.priceDetail?.id === item.priceDetail?.id)
       return {
@@ -109,67 +119,85 @@ const CheckpointScreen = () => {
     })
   }
   const onChangePaymentType = (value: string) => setPaymentType(PaymentType.CASH)
+  const onCloseModalInvoice = () => {
+    resetSaveInvoice()
+    navigate(SCREENS.AREA_SALES)
+  }
   const isCash = paymentType === PaymentType.CASH
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <Fragment>
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
-        <Surface
-          style={{
-            padding: 8,
-            gap: 8,
-          }}
-        >
-          <TextInput label="Documento del cliente" mode="outlined" value="88888888" dense />
-          <RadioButtonGroup
-            items={optionTypeLabel}
-            label="Método de pago"
-            value={paymentType}
-            onValueChange={onChangePaymentType}
-          />
-          {isCash && (
-            <>
-              <RadioButtonGroup
-                items={optionCheckoutLabel}
-                value={'1'}
-                label="Caja"
-                onValueChange={(type) => setPaymentType(type as PaymentType)}
-              />
-              <TextInput label="Monto" mode="outlined" value={totalOrder.toString()} dense />
-            </>
-          )}
+      <Surface
+        style={{
+          padding: 8,
+          gap: 8,
+        }}
+      >
+        <TextInput label="Documento del cliente" mode="outlined" value="88888888" dense />
+        <RadioButtonGroup
+          items={optionTypeLabel}
+          label="Método de pago"
+          value={paymentType}
+          onValueChange={onChangePaymentType}
+        />
+        {isCash && (
+          <>
+            <RadioButtonGroup
+              items={optionCheckoutLabel}
+              value={'1'}
+              label="Caja"
+              onValueChange={(type) => {}}
+            />
+            <TextInput label="Monto" mode="outlined" value={totalOrder.toString()} dense />
+          </>
+        )}
 
-          <Block flex={0} row justify="space-between" align="center">
-            <Text variant="titleMedium">TOTAL A PAGAR:</Text>
-            <Text variant="headlineMedium">s/ {totalOrder}</Text>
-          </Block>
-          <Divider />
-          <Block flex={0} row justify="space-between" align="center">
-            <Text variant="titleMedium">TOTAL EFECTIVO:</Text>
-            <Text variant="headlineMedium">s/ {totalOrder}</Text>
-          </Block>
-          <Divider />
-          <Block flex={0} row justify="space-between" align="center">
-            <Text variant="titleMedium">TOTAL TARJETAS:</Text>
-            <Text variant="headlineMedium">s/ 0.00</Text>
-          </Block>
-          <Divider />
-          <Block flex={0} row justify="space-between" align="center">
-            <Text variant="titleMedium">TOTAL AL CRÉDITO:</Text>
-            <Text variant="headlineMedium">s/ 0.00</Text>
-          </Block>
-          <Divider />
-          <Block flex={0} row justify="space-between" align="center">
-            <Text variant="titleMedium">VUELTO:</Text>
-            <Text variant="headlineMedium">s/ 0.00</Text>
-          </Block>
-          <Divider />
-          <Button onPress={createSales} compact mode="contained">
-            CREAR BOLETA
-          </Button>
-        </Surface>
-      </ScrollView>
-    </SafeAreaView>
+        <Block flex={0} row justify="space-between" align="center">
+          <Text variant="titleMedium">TOTAL A PAGAR:</Text>
+          <Text variant="headlineMedium">s/ {totalOrder}</Text>
+        </Block>
+        <Divider />
+        <Block flex={0} row justify="space-between" align="center">
+          <Text variant="titleMedium">TOTAL EFECTIVO:</Text>
+          <Text variant="headlineMedium">s/ {totalOrder}</Text>
+        </Block>
+        <Divider />
+        <Block flex={0} row justify="space-between" align="center">
+          <Text variant="titleMedium">TOTAL TARJETAS:</Text>
+          <Text variant="headlineMedium">s/ 0.00</Text>
+        </Block>
+        <Divider />
+        <Block flex={0} row justify="space-between" align="center">
+          <Text variant="titleMedium">TOTAL AL CRÉDITO:</Text>
+          <Text variant="headlineMedium">s/ 0.00</Text>
+        </Block>
+        <Divider />
+        <Block flex={0} row justify="space-between" align="center">
+          <Text variant="titleMedium">VUELTO:</Text>
+          <Text variant="headlineMedium">s/ 0.00</Text>
+        </Block>
+        <Divider />
+        <Button disabled={isLoadingSaveInvoice} onPress={createSales} compact mode="contained">
+          CREAR BOLETA
+        </Button>
+      </Surface>
+      <Portal>
+        <Dialog visible={!!urlInvoice} onDismiss={onCloseModalInvoice}>
+          <Dialog.Content>
+            <View
+              style={{
+                height,
+              }}
+            >
+              <PDFViewer uri={urlInvoice || ''} />
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={onCloseModalInvoice}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    </Fragment>
   )
 }
 export default CheckpointScreen

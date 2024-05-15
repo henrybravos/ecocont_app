@@ -186,22 +186,18 @@ const AreaSales = () => {
         )}
       </Block>
 
-      {!isLoading ? (
-        <FlatList
-          data={attentionPoints || []}
-          columnWrapperStyle={styles.listAttention}
-          numColumns={2}
-          renderItem={renderAttentionPoint}
-          ListEmptyComponent={
-            <EmptyComponent
-              visible
-              message={`No existen puntos de atención ${areaSelected?.description && `en ${areaSelected.description}`}`}
-            />
-          }
-        />
-      ) : (
-        <SkeletonAttentionPoints />
-      )}
+      <FlatList
+        data={attentionPoints || []}
+        columnWrapperStyle={styles.listAttention}
+        numColumns={2}
+        renderItem={renderAttentionPoint}
+        ListEmptyComponent={
+          <EmptyComponent
+            visible
+            message={`No existen puntos de atención ${areaSelected?.description && `en ${areaSelected.description}`}`}
+          />
+        }
+      />
     </Block>
   )
 }

@@ -58,3 +58,8 @@ export type Invoice = {
     areaId: string
   }
 }
+export type InvoiceResponse = {
+  url: string
+  downloadUrl: string
+  status: boolean
+}

@@ -86,7 +86,7 @@ const OrderSalesManagement = () => {
       <OrderCartDraggable />
       <EditProductDialog />
       <DeleteProductDialog />
-      <Snackbar visible={!!ctx.invoiceCreateId} onDismiss={ctx.resetSaveInvoice}>
+      <Snackbar duration={2000} visible={!!ctx.invoiceCreateId} onDismiss={ctx.resetSaveInvoice}>
         Cambios guardados correctamente
       </Snackbar>
     </Block>

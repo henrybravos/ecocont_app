@@ -258,7 +258,10 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
     isDisplayButtonConfirm,
     isLoadingSaveInvoice,
     order,
-    point,
+    point: {
+      ...point,
+      orderId: point.orderId ?? order?.id ?? invoiceCreateId,
+    },
     products,
     totalOrder,
     categories,

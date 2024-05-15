@@ -148,7 +148,37 @@ export interface CreateOrUpdatePedido {
   movimientos: Movimiento[]
   zona_id: string
 }
-
+export interface OperationResponse {
+  createOrUpdatePedido: {
+    api_fact: string
+    apifact: {
+      data: {
+        external_id: string
+      }
+      links: {
+        cdr: string
+        pdf: string
+        xml: string
+      }
+      message: string
+      response: {
+        description: string
+      }
+      success: boolean
+    }
+    external_id: string
+    file_name: string
+    pdf_ruta: {
+      base: string
+      contenedor: boolean
+      data: string
+      download: string
+      exists: boolean
+      message: string
+      status: boolean
+    }
+  }
+}
 export interface Comprobante {
   codigo: string
   nombre: string

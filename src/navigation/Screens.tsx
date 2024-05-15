@@ -5,8 +5,7 @@ import { View } from 'react-native'
 
 import Text from '@components/Text'
 
-import PDFViewer from '@screens/components/viewer/PDFViewer'
-import { AreaSales, Checkpoint, Login, OrderSales } from '@screens/index'
+import { AreaSales, Checkpoint, Login, OrderSales, ViewerPdf } from '@screens/index'
 
 import { useAppData, useScreenOptions } from '@hooks/index'
 
@@ -28,7 +27,11 @@ export default () => {
   useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
   return (
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>
-      <Stack.Screen name={SCREENS.VIEWER_PDF} component={PDFViewer} />
+      <Stack.Screen
+        name={SCREENS.VIEWER_PDF}
+        component={ViewerPdf}
+        options={{ title: 'Caja', headerShown: false }}
+      />
       {auth?.authentication && (
         <Fragment>
           <Stack.Screen

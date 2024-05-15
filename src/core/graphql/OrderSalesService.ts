@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
 import { orderSalesResponseAdapter } from '@core/adapters/order-sales.adapter'
-import { salesToApiRequest } from '@core/adapters/sales.adapter'
+import { invoiceResponseFromApi, salesToApiRequest } from '@core/adapters/sales.adapter'
 import { OrderSalesResponseApi } from '@core/types'
-import { CreateOrUpdatePedidoResponse } from '@core/types/api-sales'
+import { CreateOrUpdatePedidoResponse, OperationResponse } from '@core/types/api-sales'
 import { Invoice } from '@core/types/sales'
 
 import { getClient } from '@utils/apollo'
@@ -182,7 +182,7 @@ const OrderSalesService = {
     console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
 
     return getClient()
-      .query<CreateOrUpdatePedidoResponse>({
+      .query<OperationResponse>({
         query: gql`
           mutation createOrUpdatePedido($id: String, $venta: JSON!) {
             createOrUpdatePedido(id: $id, venta: $venta) {
@@ -200,8 +200,8 @@ const OrderSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => {
-        console.log(response.data.createOrUpdatePedido)
-        return response.data.createOrUpdatePedido.id
+        console.log(response.data)
+        return invoiceResponseFromApi(response.data)
       })
       .catch((error) => {
         console.log({ error })
