@@ -1,8 +1,9 @@
 import * as Print from 'expo-print'
+import * as Sharing from 'expo-sharing'
 import { View } from 'moti'
 import { useState } from 'react'
-import { Dimensions, ScrollView, StyleSheet } from 'react-native'
-import { Icon, IconButton, ProgressBar } from 'react-native-paper'
+import { Dimensions, StyleSheet } from 'react-native'
+import { IconButton } from 'react-native-paper'
 import Pdf from 'react-native-pdf'
 
 const PDFViewer = ({ uri }: { uri: string }) => {
@@ -10,12 +11,18 @@ const PDFViewer = ({ uri }: { uri: string }) => {
   const printPdf = () => {
     Print.printAsync({ uri: filePrint })
   }
+  const sharePdf = async () => {
+    await Sharing.shareAsync(filePrint, {
+      dialogTitle: 'Comprabante de pago',
+      mimeType: 'application/pdf',
+      UTI: 'com.adobe.pdf',
+    })
+  }
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row' }}>
         {filePrint && <IconButton icon="printer" size={24} onPress={printPdf} />}
-
-        <IconButton icon="export-variant" size={24} />
+        {filePrint && <IconButton onPress={sharePdf} icon="export-variant" size={24} />}
       </View>
       <Pdf
         trustAllCerts={false}

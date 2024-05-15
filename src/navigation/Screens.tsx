@@ -27,11 +27,6 @@ export default () => {
   useEffect(() => setOptions({ gestureEnabled: !!auth?.authentication }), [auth, setOptions])
   return (
     <Stack.Navigator screenOptions={{ ...screenOptions.stack }}>
-      <Stack.Screen
-        name={SCREENS.VIEWER_PDF}
-        component={ViewerPdf}
-        options={{ title: 'Caja', headerShown: false }}
-      />
       {auth?.authentication && (
         <Fragment>
           <Stack.Screen
