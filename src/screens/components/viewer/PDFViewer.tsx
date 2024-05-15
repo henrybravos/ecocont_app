@@ -1,18 +1,22 @@
 import { Dimensions, StyleSheet } from 'react-native'
-import Pdf from 'react-native-pdf'
+
+import Text from '@components/Text'
+
+//import Pdf from 'react-native-pdf'
 
 const PDFViewer = () => {
   return (
-    <Pdf
-      trustAllCerts={false}
-      source={{
-        uri: 'https://www.orimi.com/pdf-test.pdf',
-      }}
-      style={styles.pdf}
-      onLoadComplete={(numberOfPages, filePath) => {
-        console.log(`number of pages: ${numberOfPages}`)
-      }}
-    />
+    <Text>Pdf</Text>
+    // <Pdf
+    //   trustAllCerts={false}
+    //   source={{
+    //     uri: 'https://www.orimi.com/pdf-test.pdf',
+    //   }}
+    //   style={styles.pdf}
+    //   onLoadComplete={(numberOfPages, filePath) => {
+    //     console.log(`number of pages: ${numberOfPages}`)
+    //   }}
+    // />
   )
 }
 export default PDFViewer
