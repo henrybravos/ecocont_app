@@ -20,7 +20,7 @@ export type RootStackParamList = {
   [SCREENS.VIEWER_PDF]: undefined
   [SCREENS.CHECKPOINT]: {
     point: AttentionPoint
-    checkout: undefined
+    checkout: Checkout
   }
 }
 export type StackNavigation = NavigationProp<RootStackParamList>

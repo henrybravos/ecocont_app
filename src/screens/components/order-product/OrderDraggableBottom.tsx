@@ -78,8 +78,8 @@ const OrderDraggableBottom = () => {
   const ctx = useOrderSalesContext()
   const navigation = useNavigation<StackNavigation>()
   const navigateToCheckpoint = () => {
-    if (ctx.point.orderId)
-      navigation.navigate(SCREENS.CHECKPOINT, { point: ctx.point, checkout: undefined })
+    if (ctx.point.orderId && ctx.checkout?.id)
+      navigation.navigate(SCREENS.CHECKPOINT, { point: ctx.point, checkout: ctx.checkout })
   }
   return (
     <DraggableBottomPanResponder>
@@ -90,7 +90,7 @@ const OrderDraggableBottom = () => {
         <Divider bold />
         <Divider bold />
         <ProductListCartShopping />
-        {ctx.order?.movementOrder.length > 0 && (
+        {ctx.order?.movementOrder.length > 0 && ctx.checkout?.id && (
           <Button onPress={navigateToCheckpoint} mode="contained" compact>
             COBRAR
           </Button>

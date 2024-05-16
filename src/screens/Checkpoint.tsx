@@ -2,11 +2,11 @@ import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 import {
   Button,
   Dialog,
   Divider,
+  IconButton,
   PaperProvider,
   Portal,
   ProgressBar,
@@ -31,8 +31,7 @@ import { reduceSumMultiplyArray } from '@utils/scripts'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
-const height = Dimensions.get('window').height - 200
-const width = Dimensions.get('window').width
+const height = Dimensions.get('window').height - 100
 enum PaymentType {
   BANK = 'BANK',
   CASH = 'CASH',
@@ -67,7 +66,7 @@ const CheckpointScreen = () => {
   )
 
   useEffect(() => {
-    if (!params?.point) {
+    if (!params?.point || !params?.point.orderId || !params?.checkout?.id) {
       navigate(SCREENS.AREA_SALES)
     } else {
       fetchOrder({
@@ -125,14 +124,21 @@ const CheckpointScreen = () => {
   }
   const isCash = paymentType === PaymentType.CASH
   return (
-    <Fragment>
+    <SafeAreaView>
       <StatusBar style="dark" />
+      <ProgressBar indeterminate visible={isLoadingOrderSales || isLoadingSaveInvoice} />
       <Surface
         style={{
           padding: 8,
           gap: 8,
         }}
       >
+        {errorSaveUpdate && (
+          <Block>
+            <Text>Error al crear la boleta</Text>
+            <IconButton icon="close" onPress={onCloseModalInvoice} />
+          </Block>
+        )}
         <TextInput label="Documento del cliente" mode="outlined" value="88888888" dense />
         <RadioButtonGroup
           items={optionTypeLabel}
@@ -183,21 +189,31 @@ const CheckpointScreen = () => {
       </Surface>
       <Portal>
         <Dialog visible={!!urlInvoice} onDismiss={onCloseModalInvoice}>
-          <Dialog.Content>
-            <View
-              style={{
-                height,
-              }}
-            >
-              <PDFViewer uri={urlInvoice || ''} />
-            </View>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={onCloseModalInvoice}>OK</Button>
-          </Dialog.Actions>
+          <View
+            style={{
+              height,
+            }}
+          >
+            <PDFViewer uri={urlInvoice || ''} />
+          </View>
+          <IconButton
+            style={{
+              position: 'absolute',
+              width: 32,
+              height: 32,
+              borderRadius: 32,
+              justifyContent: 'center',
+              alignContent: 'center',
+              top: 0,
+              right: 0,
+            }}
+            size={24}
+            icon="close"
+            onPress={onCloseModalInvoice}
+          />
         </Dialog>
       </Portal>
-    </Fragment>
+    </SafeAreaView>
   )
 }
 export default CheckpointScreen

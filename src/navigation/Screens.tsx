@@ -12,13 +12,7 @@ import { useAppData, useScreenOptions } from '@hooks/index'
 import { RootStackParamList, SCREENS } from '@constants/types/navigation'
 
 const Stack = createStackNavigator<RootStackParamList>()
-const Hello = () => {
-  return (
-    <View>
-      <Text>Hello</Text>
-    </View>
-  )
-}
+
 export default () => {
   const { userAuth } = useAppData()
   const { setOptions } = useNavigation()

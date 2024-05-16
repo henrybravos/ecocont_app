@@ -65,10 +65,6 @@ const AreaSales = () => {
   const [isLoadingUser, userSales, fetchUserDetail] = useFetchApi(
     UserSalesService.getDetailUserActive,
   )
-  /*const { data, error, loading } = useSubscription<AttentionPoint>(GET_AREA, {
-    variables: { zona_id: '5648a442-41cd-11ec-9aa4-0289b1985170' },
-  })
-  console.log({ data })*/
   useEffect(() => {
     setAttentionPoints(attentionPointsResponse ?? [])
   }, [attentionPointsResponse])

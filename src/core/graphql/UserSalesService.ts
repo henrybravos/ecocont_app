@@ -53,6 +53,7 @@ const UserSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => {
+        console.log('userData', response.data)
         return salesActiveUserResponseAdapter(response.data)
       }),
   getAttentionPoints: async ({ areaId }: { areaId: string }) =>
