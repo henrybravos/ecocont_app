@@ -78,7 +78,6 @@ export type VentaTotalesApi = {
   items: number
   totalTarjetas: number
   totalOtros: number
-  tarjetas: any[]
   otros: any[]
   total_descuento_bi: number
   total_igv: number
@@ -88,6 +87,21 @@ export type VentaTotalesApi = {
     cf: string
     pcge_id: string
   }
+  tarjetas: {
+    id: string
+    referencia: string
+    monto: string
+    cf: string
+    cuenta: string
+    pcge_id: string
+  }[]
+  credito: {
+    fecha: string
+    id: string
+    invalid: boolean
+    monto: string
+    numero: string
+  }[]
   totalEfectivo: number
   total_venta_info: number
   total_impuestos_bolsa_plastica: number

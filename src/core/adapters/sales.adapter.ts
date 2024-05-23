@@ -41,6 +41,19 @@ export const salesCheckoutAdapter = (checkout: CheckoutApi): Checkout => {
     code: checkout?.code,
     description: checkout.description,
     id: checkout.id,
+    accounts: checkout.cuentas.map((c) => ({
+      bankId: c.banco_id,
+      control: c.control,
+      currency: {
+        code: c.moneda.codigo,
+      },
+      description: c.descripcion,
+      id: c.id,
+      pcge: {
+        id: c.pcge.id,
+      },
+      type: c.tipo === '1' ? 'CASH' : 'BANK',
+    })),
   }
 }
 
@@ -186,17 +199,37 @@ export const salesToApiRequest = (invoice: Invoice): VentaApi => {
       id: invoice.customer.id,
     },
     totales: {
-      totalTarjetas: 0,
+      totalTarjetas: invoice.totals?.cardPayment || 0,
       totalOtros: 0,
-      tarjetas: [],
       otros: [],
+      credito:
+        invoice.totals?.creditPaymentDetail?.map((c) => ({
+          monto: c.amount,
+          fecha: c.date,
+          id: c.id,
+          invalid: c.invalid,
+          numero: `00${c.code}`.slice(-3),
+        })) || [],
       total_descuento_bi: 0,
       total_descuento_nbi: 0,
       efectivo: {
-        monto: totals.total_venta_info + '',
-        cf: '6a58642c-41cd-11ec-9c6c-0289b1985170',
-        pcge_id: '89f57e04-3d7d-11ec-8c95-0289b1985170',
+        monto: `${invoice.totals?.cashPaymentDetail?.amount ?? 0}` || '0',
+        cf: invoice.totals?.cashPaymentDetail?.cf || '',
+        pcge_id: invoice.totals?.cashPaymentDetail?.pcgeId || '',
       },
+      tarjetas:
+        (invoice.totals?.cardPayment || 0) > 0
+          ? [
+              {
+                id: invoice.totals?.cardPaymentDetail?.id || '',
+                cf: invoice.totals?.cardPaymentDetail?.cf || '',
+                cuenta: invoice.totals?.cardPaymentDetail?.account || '',
+                monto: invoice.totals?.cardPaymentDetail?.amount || '',
+                pcge_id: invoice.totals?.cardPaymentDetail?.pcgeId || '',
+                referencia: invoice.totals?.cardPaymentDetail?.reference || '',
+              },
+            ]
+          : [],
       totalEfectivo: totals.total_venta_info,
       totalCredito: 0,
       ...totals,

@@ -8,6 +8,8 @@ import { DecodeToken } from '@core/types/token'
 
 import { LOCAL } from '@constants/local-storage'
 
+export const CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
 export const decodeToken = (auth: string): DecodeToken | null => {
   try {
     const decoded = JWT.decode(auth, null, { algorithm: SupportedAlgorithms.HS256, timeSkew: 30 })
@@ -98,6 +100,12 @@ export const validateRUC = (ruc: string) => {
     ? { success: true, message: 'Ok' }
     : { success: false, message: 'RUC no válido!' }
 }
+export const strRandom = (length: number) =>
+  Array(length)
+    .join()
+    .split(',')
+    .map(() => CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length)))
+    .join('')
 
 declare global {
   interface Number {

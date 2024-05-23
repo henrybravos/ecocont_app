@@ -14,8 +14,23 @@ export type TotalsInvoice = {
   cashPaymentDetail: {
     amount: number
     cf: string
-    pcge_id: string
+    pcgeId: string
   }
+  cardPaymentDetail: {
+    id: string
+    reference: string
+    amount: string
+    cf: string
+    account: string
+    pcgeId: string
+  }
+  creditPaymentDetail: {
+    id: string
+    code: string
+    amount: string
+    date: string
+    invalid: boolean
+  }[]
   cashPayment: number
   salesAmount: number
   plasticBagTax: number
@@ -44,7 +59,7 @@ export type Invoice = {
   customer: {
     id: string
   }
-  totals?: TotalsInvoice
+  totals?: Partial<TotalsInvoice>
   items: {
     old: MovementOrder
     new: MovementOrder

@@ -37,17 +37,10 @@ export default () => {
             right={0}
             width={sizes.s}
             height={sizes.s}
-            radius={sizes.xs}
+            radius={sizes.s}
             position="absolute"
             gradient={gradients?.primary}
           />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.dispatch(DrawerActions.jumpTo('Screens', { screen: 'Profile' }))
-          }
-        >
-          <Image radius={6} width={24} height={24} source={{ uri: undefined }} />
         </TouchableOpacity>
       </Block>
     ),

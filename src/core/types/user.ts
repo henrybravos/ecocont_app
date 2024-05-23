@@ -15,11 +15,25 @@ export type SalesArea = {
   controlAttentionPoint: boolean
   attentionPoints: AttentionPoint[]
 }
+export type Account = {
+  id: string
+  description: string
+  currency: {
+    code: string
+  }
+  pcge: {
+    id: string
+  }
+  type: 'CASH' | 'BANK'
+  control: boolean
+  bankId: string | null
+}
 export type Checkout = {
   id: string
   code: string
   description: string
   areas: SalesArea[]
+  accounts: Account[]
 }
 export type UserSales = {
   id: string

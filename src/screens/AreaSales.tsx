@@ -100,7 +100,6 @@ const AreaSales = () => {
       },
     })
     return () => {
-      console.log('unsubscribe')
       subscription.unsubscribe()
     }
   }, [areaSelected?.id, attentionPoints])

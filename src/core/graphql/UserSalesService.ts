@@ -29,6 +29,25 @@ const UserSalesService = {
                   codigo
                   descripcion
                 }
+                cuentas {
+                  id
+                  tipo
+                  banco_id
+                  descripcion
+                  control
+                  moneda {
+                    codigo
+                  }
+                  pcge {
+                    id
+                  }
+                }
+                detalle {
+                  id
+                  saldo_inicial
+                  created_at
+                  opened_at
+                }
               }
               zonas {
                 id

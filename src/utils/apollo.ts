@@ -1,3 +1,4 @@
+import { createNavigationContainerRef } from '@react-navigation/native'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
@@ -11,8 +12,11 @@ import { OperationDefinitionNode } from 'graphql'
 import { getAuthenticationStorage } from '@utils/scripts'
 
 import { URL_API, WS_URL } from '@constants/environment'
+import { RootStackParamList, SCREENS } from '@constants/types/navigation'
 
 import { SESSION_IN_OTHER_DEVICE, TOKEN_EXPIRED, TOKEN_INVALID } from './error'
+
+export const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
 let authToken = ''
 
@@ -31,13 +35,21 @@ const getClient = () => {
           switch (error.statusCode) {
             case TOKEN_EXPIRED:
               console.log('El Token ha Expirado')
-              location.href = '/login'
+              if (navigationRef.isReady()) {
+                navigationRef.navigate(SCREENS.LOGIN)
+              }
               break
             case SESSION_IN_OTHER_DEVICE:
               console.log('Sesión iniciada en otro dispositivo')
+              if (navigationRef.isReady()) {
+                navigationRef.navigate(SCREENS.LOGIN)
+              }
               break
             case TOKEN_INVALID:
               console.log('No tiene los privilegios...')
+              if (navigationRef.isReady()) {
+                navigationRef.navigate(SCREENS.LOGIN)
+              }
               break
             default:
               break

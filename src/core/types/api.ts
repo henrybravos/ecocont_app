@@ -56,6 +56,19 @@ export type CheckoutApi = {
   id: string
   code: string
   description: string
+  cuentas: {
+    banco_id: string | null
+    control: boolean
+    descripcion: string
+    id: string
+    moneda: {
+      codigo: string
+    }
+    pcge: {
+      id: string
+    }
+    tipo: string
+  }[]
   zonas: SalesAreaApi[]
 }
 export type UserSalesResponseApi = {
@@ -194,5 +207,13 @@ export type CategoryResponseApi = {
     id: string
     nombre: string
     codigo: string
+  }[]
+}
+export type CustomerByParamResponseApi = {
+  clientesByParam: {
+    value: string
+    label: string
+    code: string
+    name: string
   }[]
 }
