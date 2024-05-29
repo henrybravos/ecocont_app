@@ -34,7 +34,7 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
     ProductService.getCategories,
   )
   const [isLoadingOrderSales, order, fetchOrder, _, resetOrder] = useFetchApi(
-    OrderSalesService.getDetailUserActive,
+    OrderSalesService.getOrder,
   )
   const [
     isLoadingSaveInvoice,

@@ -100,9 +100,7 @@ const useCheckpoint = () => {
     errorSaveUpdate,
     resetSaveInvoice,
   ] = useFetchApi(OrderSalesService.saveInvoice)
-  const [isLoadingOrderSales, order, fetchOrder, _, __] = useFetchApi(
-    OrderSalesService.getDetailUserActive,
-  )
+  const [isLoadingOrderSales, order, fetchOrder, _, __] = useFetchApi(OrderSalesService.getOrder)
   const [
     isLoadingCustomer,
     customersResponse,

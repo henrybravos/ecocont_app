@@ -1,4 +1,3 @@
-import { Observable } from 'apollo-client/util/Observable'
 import gql from 'graphql-tag'
 
 import {

@@ -10,7 +10,7 @@ import { getClient } from '@utils/apollo'
 import { getAuthenticationStorage } from '@utils/scripts'
 
 const OrderSalesService = {
-  getDetailUserActive: async ({ orderId }: { orderId: string }) =>
+  getOrder: async ({ orderId }: { orderId: string }) =>
     getClient()
       .query<OrderSalesResponseApi>({
         query: gql`
