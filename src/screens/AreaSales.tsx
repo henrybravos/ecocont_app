@@ -154,21 +154,11 @@ const AreaSales = () => {
   const navigateToOrderWithoutPoint = () => {
     //console.log('checkoutSelected', checkoutSelected)
     if (!checkoutSelected || !areaSelected) return
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: SCREENS.ORDER_SALES,
-            params: {
-              point: undefined,
-              checkout: checkoutSelected,
-              area: areaSelected,
-            },
-          },
-        ],
-      }),
-    )
+    navigation.navigate(SCREENS.ORDER_SALES, {
+      checkout: checkoutSelected,
+      area: areaSelected,
+      point: undefined,
+    })
   }
   const checkouts = userSales?.checkouts || []
   const isCashier = !!userSales?.areas.length

@@ -21,14 +21,14 @@ export default () => {
       {auth?.authentication && (
         <Fragment>
           <Stack.Screen
-            name={SCREENS.ORDER_SALES}
-            component={OrderSales}
-            options={{ title: 'Pedidos', headerShown: false }}
-          />
-          <Stack.Screen
             name={SCREENS.AREA_SALES}
             component={AreaSales}
             options={{ title: 'Zonas de atención' }}
+          />
+          <Stack.Screen
+            name={SCREENS.ORDER_SALES}
+            component={OrderSales}
+            options={{ title: 'Pedidos', headerShown: false }}
           />
           <Stack.Screen
             name={SCREENS.CHECKPOINT}

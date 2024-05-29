@@ -34,7 +34,7 @@ export const useDataProvider = () => {
   useEffect(() => {
     const remainToken = verifyAuth()
     const timeout = remainToken <= 5 ? remainToken : remainToken - 5
-    //console.log('REFRESH TOKEN EN', timeout, 'SEGUNDOS, pero VENCE EN', remainToken)
+    console.log('REFRESH TOKEN EN', timeout, 'SEGUNDOS, pero VENCE EN', remainToken)
     if (remainToken <= 0) {
       handleClearUserAuth()
     } else {
