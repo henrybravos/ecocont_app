@@ -20,8 +20,10 @@ import OrderSalesProvider, {
   useOrderSalesContext,
 } from '@screens/hooks/order-sales/useOrderSalesContext'
 
+import { SalesArea } from '@core/types/user'
+
 import { COLORS } from '@constants/light'
-import { SCREENS, StackNavigation } from '@constants/types/navigation'
+import { StackNavigation } from '@constants/types/navigation'
 
 type CategoryProps = ChipProps & {}
 const Category = (props: CategoryProps) => {
@@ -98,19 +100,18 @@ const OrderSalesManagement = () => {
   )
 }
 const OrderSalesScreen = () => {
-  const { getState, navigate } = useNavigation<StackNavigation>()
+  const { getState } = useNavigation<StackNavigation>()
   const state = getState()
   const params = state.routes[state.index].params
-  useEffect(() => {
-    if (!params?.point) {
-      navigate(SCREENS.AREA_SALES)
-    }
-  }, [params])
-  if (!params?.point) return null
+  if (!params?.area) return null
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="dark" />
-      <OrderSalesProvider point={params.point} checkout={params.checkout}>
+      <OrderSalesProvider
+        area={params?.area as SalesArea}
+        point={params?.point}
+        checkout={params?.checkout}
+      >
         <OrderSalesManagement />
       </OrderSalesProvider>
     </SafeAreaView>

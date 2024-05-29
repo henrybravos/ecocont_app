@@ -24,7 +24,7 @@ const CustomerService = {
         },
       })
       .then((response) => {
-        console.log(response.data.clientesByParam)
+        //console.log(response.data.clientesByParam)
         return response.data.clientesByParam
       }),
 }

@@ -131,12 +131,13 @@ const useCheckpoint = () => {
         new: item as MovementOrder,
       }
     })
+    console.log(params?.area, 'AREAAAA')
     const extraData = {
       checkoutId: params?.checkout?.id || '',
-      pointAttentionId: params?.point.id || '',
+      pointAttentionId: params?.point?.id || '',
       orderId: order.id,
       salesId: order.sales.id,
-      areaId: params?.point.areaId || '',
+      areaId: params?.area?.id || '',
     }
     const totalCash = Number(payments.CASH.total)
     const totalBank = Number(payments.BANK.total)
@@ -286,7 +287,7 @@ const useCheckpoint = () => {
     navigate(SCREENS.AREA_SALES)
   }
   const onChangeCustomer = (customer: { label: string; value: string; code: string }) => {
-    console.log({ customer })
+    //console.log({ customer })
     setCustomerSelected({
       id: customer.value,
       label: customer.label,
@@ -324,7 +325,7 @@ const useCheckpoint = () => {
       })
     }
   }, [paymentType, totalOrder, payments])
-  console.log(payments)
+  //console.log(payments)
   return {
     totalOrder,
     payments,

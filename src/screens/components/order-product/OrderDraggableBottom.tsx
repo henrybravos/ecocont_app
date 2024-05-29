@@ -11,6 +11,8 @@ import { AnimatedText } from '@components/animated'
 import SwipeProductOrder from '@screens/components/order-product/SwipeProductOrder'
 import { useOrderSalesContext } from '@screens/hooks/order-sales/useOrderSalesContext'
 
+import { AttentionPoint } from '@core/types/user'
+
 import { formatNumber } from '@utils/scripts'
 
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
@@ -79,7 +81,11 @@ const OrderDraggableBottom = () => {
   const navigation = useNavigation<StackNavigation>()
   const navigateToCheckpoint = () => {
     if (ctx.point.orderId && ctx.checkout?.id)
-      navigation.navigate(SCREENS.CHECKPOINT, { point: ctx.point, checkout: ctx.checkout })
+      navigation.navigate(SCREENS.CHECKPOINT, {
+        point: ctx.point as AttentionPoint,
+        checkout: ctx.checkout,
+        area: ctx.area,
+      })
   }
   return (
     <DraggableBottomPanResponder>

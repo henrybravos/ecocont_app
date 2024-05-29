@@ -29,7 +29,7 @@ export default function useFetchApi<S, A>(apiFunction: ApiFunctionWithArg<S, A>)
         setResponse(response)
       }
     } catch (error) {
-      console.log(error)
+      //console.log(error)
       if (error instanceof Error) {
         setError(error.message)
       } else {

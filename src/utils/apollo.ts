@@ -1,6 +1,5 @@
 import * as Updates from 'expo-updates'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { CommonActions } from '@react-navigation/native'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
@@ -44,22 +43,22 @@ const getClient = () => {
   return new ApolloClient({
     link: ApolloLink.from([
       onError(({ networkError, operation }) => {
-        console.log('networkError', networkError, operation)
+        //console.log('networkError', networkError, operation)
         const error = networkError as ServerError
         if (error && error.statusCode) {
           switch (error.statusCode) {
             case TOKEN_EXPIRED:
-              console.log('El Token ha Expirado')
+              //console.log('El Token ha Expirado')
               closeSession('La sesión ha Expirado, vuelva a loguearse')
               break
             case SESSION_IN_OTHER_DEVICE:
-              console.log('Sesión iniciada en otro dispositivo')
-              console.log('login after session other device')
+              //console.log('Sesión iniciada en otro dispositivo')
+              //console.log('login after session other device')
               // navigationRef.navigate(SCREENS.LOGIN)
               closeSession('Sesión iniciada en otro dispositivo')
               break
             case TOKEN_INVALID:
-              console.log('No tiene los privilegios...')
+              //console.log('No tiene los privilegios...')
               closeSession('No tiene los privilegios para acceder a esta aplicación')
               break
             default:

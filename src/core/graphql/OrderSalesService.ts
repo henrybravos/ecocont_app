@@ -169,7 +169,7 @@ const OrderSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => {
-        console.log(response.data.createOrUpdatePedido)
+        console.log('createUpdate', response.data.createOrUpdatePedido)
         return response.data.createOrUpdatePedido.id
       })
       .catch((error) => {
@@ -179,7 +179,6 @@ const OrderSalesService = {
   },
   saveInvoice: async ({ orderId, invoice }: { orderId: string; invoice: Invoice }) => {
     const invoiceToApi = salesToApiRequest(invoice)
-    console.log({ invoiceToApi: JSON.stringify(invoiceToApi) })
 
     return getClient()
       .query<OperationResponse>({
@@ -200,11 +199,11 @@ const OrderSalesService = {
         context: { headers: { Authentication: `Bearer ${await getAuthenticationStorage()}` } },
       })
       .then((response) => {
-        console.log(response.data)
+        //console.log(response.data)
         return invoiceResponseFromApi(response.data)
       })
       .catch((error) => {
-        console.log({ error })
+        //console.log({ error })
         return null
       })
   },

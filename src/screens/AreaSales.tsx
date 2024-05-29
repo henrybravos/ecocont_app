@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native'
+import { CommonActions } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
-import { StyleSheet, TouchableHighlight } from 'react-native'
+import { StyleSheet, TouchableHighlight, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
-import { Icon, ProgressBar } from 'react-native-paper'
+import { Button, Icon, ProgressBar } from 'react-native-paper'
 
 import Block from '@components/Block'
-import EmptyComponent from '@components/EmptyComponent'
 import Text from '@components/Text'
 import { DropdownList } from '@components/paper'
 
@@ -17,6 +17,7 @@ import { AttentionPoint, Checkout, SalesArea } from '@core/types/user'
 import { useFetchApi } from '@hooks/index'
 import useTheme from '@hooks/useTheme'
 
+import { COLORS } from '@constants/light'
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 import SkeletonAttentionPoints from './components/attention-points/SkeletonAttentionPoints'
@@ -29,33 +30,43 @@ const AttentionPointComponent = ({ point, checkout }: AttentionPointComponentPro
   const styleStatus = isOccupied ? styles.pointOccupied : styles.pointAvailable
   const icon = !isOccupied ? 'circle-outline' : 'circle-slice-8'
   const navigateToOrder = () => {
-    navigation.navigate(SCREENS.ORDER_SALES, { point, checkout })
+    navigation.navigate(SCREENS.ORDER_SALES, { point, checkout, area: { id: point.areaId } })
+  }
+  const navigateToCheckout = () => {
+    navigation.navigate(SCREENS.CHECKPOINT, { point, checkout, area: { id: point.areaId } })
   }
   return (
-    <TouchableHighlight
-      underlayColor={styleStatus.backgroundColor}
-      onPress={navigateToOrder}
-      style={styles.itemAttention}
+    <Block
+      key={point.id}
+      margin={theme.sizes.s}
+      card
+      color={styleStatus.backgroundColor}
+      style={[{ height: theme.sizes.height / 5 }, styleStatus, styles.itemAttention]}
+      center
+      align="center"
+      justify="center"
     >
-      <Block
-        key={point.id}
-        margin={theme.sizes.s}
-        card
-        color={styleStatus.backgroundColor}
-        style={[{ height: theme.sizes.height / 5 }, styleStatus]}
-        center
-        align="center"
-      >
-        <Text color="grey" h5 bold>
-          {point.description?.toUpperCase()}
-        </Text>
-        <Icon color={styleStatus.color} source={icon} size={42} />
-      </Block>
-    </TouchableHighlight>
+      <Text color="grey" h5 bold>
+        {point.description?.toUpperCase()}
+      </Text>
+      <Icon color={styleStatus.color} source={icon} size={42} />
+      <View style={{ flexDirection: 'row' }}>
+        <Button mode="elevated" onPress={navigateToOrder}>
+          PEDIDO
+        </Button>
+        {checkout && !!point?.orderId && (
+          <Button onPress={navigateToCheckout} mode="elevated">
+            CAJA
+          </Button>
+        )}
+      </View>
+    </Block>
   )
 }
 
 const AreaSales = () => {
+  const navigation = useNavigation<StackNavigation>()
+
   const [checkoutSelected, setCheckoutSelected] = useState<Checkout | null>(null)
   const [areaSelected, setAreaSelected] = useState<SalesArea | null>(null)
   const [attentionPoints, setAttentionPoints] = useState<AttentionPoint[]>([])
@@ -70,33 +81,29 @@ const AreaSales = () => {
   }, [attentionPointsResponse])
   useEffect(() => {
     if (!areaSelected || !areaSelected.id) return
-    console.log('areaSelected', areaSelected.id)
+    //console.log('areaSelected', areaSelected.id)
     const subscription = UserSalesService.subscriptionPointSaleByZone({
       areaId: areaSelected?.id || '',
     }).subscribe({
       next: (stream) => {
-        console.log('stream', stream.data?.updateMesaByZona)
+        //console.log('stream', stream.data?.updateMesaByZona)
         if (stream.data?.updateMesaByZona) {
           const attentionPoint = salesAttentionPointAdapter(stream.data.updateMesaByZona)
           attentionPoint.areaId = areaSelected.id
           const newAttentionPoints = attentionPoints.map((att) =>
             att.id === attentionPoint.id ? attentionPoint : att,
           )
-          console.log({
-            attentionPoint,
-          })
-
           setAttentionPoints(newAttentionPoints)
         }
       },
       error: (error) => {
-        console.log('error', error)
+        //console.log('error', error)
       },
       start: (dd) => {
-        console.log('start', dd)
+        //console.log('start', dd)
       },
       complete() {
-        console.log('complete')
+        //console.log('complete')
       },
     })
     return () => {
@@ -144,16 +151,36 @@ const AreaSales = () => {
   const renderAttentionPoint = ({ item }: { item: AttentionPoint }) => (
     <AttentionPointComponent point={item} checkout={checkoutSelected!} />
   )
+  const navigateToOrderWithoutPoint = () => {
+    //console.log('checkoutSelected', checkoutSelected)
+    if (!checkoutSelected || !areaSelected) return
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: SCREENS.ORDER_SALES,
+            params: {
+              point: undefined,
+              checkout: checkoutSelected,
+              area: areaSelected,
+            },
+          },
+        ],
+      }),
+    )
+  }
   const checkouts = userSales?.checkouts || []
   const isCashier = !!userSales?.areas.length
   const areas = isCashier ? userSales?.areas || [] : checkoutSelected?.areas || []
 
   const isLoading = isLoadingUser || isLoadingPoints
   if (isLoading) return <SkeletonAttentionPoints />
+  const enableButtonToOrder = attentionPoints.length === 0 && !!checkoutSelected?.id
   return (
     <Block marginVertical={4} justify="flex-start">
       <StatusBar style="dark" />
-      <Block row flex={0} marginVertical={4}>
+      <Block row flex={0} marginVertical={8}>
         {isLoading && <ProgressBar indeterminate visible={isLoading} />}
         {checkouts.length > 0 && (
           <Block>
@@ -181,18 +208,21 @@ const AreaSales = () => {
           </Block>
         )}
       </Block>
+      {enableButtonToOrder && (
+        <Button
+          buttonColor={COLORS.success.toString()}
+          onPress={navigateToOrderWithoutPoint}
+          mode="contained"
+        >
+          IR A ORDENAR
+        </Button>
+      )}
 
       <FlatList
         data={attentionPoints || []}
         columnWrapperStyle={styles.listAttention}
         numColumns={2}
         renderItem={renderAttentionPoint}
-        ListEmptyComponent={
-          <EmptyComponent
-            visible
-            message={`No existen puntos de atención ${areaSelected?.description && `en ${areaSelected.description}`}`}
-          />
-        }
       />
     </Block>
   )
@@ -210,11 +240,11 @@ const styles = StyleSheet.create({
     flexBasis: '50%',
   },
   pointOccupied: {
-    backgroundColor: '#ffd3eb',
-    color: '#fd5e5e',
+    backgroundColor: COLORS.card.toString(),
+    color: COLORS.danger.toString(),
   },
   pointAvailable: {
-    backgroundColor: '#d3ffde',
-    color: '#5efd83',
+    backgroundColor: COLORS.card.toString(),
+    color: COLORS.success.toString(),
   },
 })

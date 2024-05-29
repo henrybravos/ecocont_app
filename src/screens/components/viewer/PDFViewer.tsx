@@ -32,10 +32,10 @@ const PDFViewer = ({ uri }: { uri: string }) => {
         style={styles.pdf}
         onLoadComplete={(numberOfPages, filePath) => {
           setFilePrint(filePath)
-          console.log(`number of pages: ${numberOfPages} ${filePath}`)
+          //console.log(`number of pages: ${numberOfPages} ${filePath}`)
         }}
         onError={(error) => {
-          console.log({ error })
+          //console.log({ error })
         }}
       />
       <View style={{ flexDirection: 'row' }}>

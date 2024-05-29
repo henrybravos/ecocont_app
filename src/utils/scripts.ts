@@ -15,7 +15,7 @@ export const decodeToken = (auth: string): DecodeToken | null => {
     const decoded = JWT.decode(auth, null, { algorithm: SupportedAlgorithms.HS256, timeSkew: 30 })
     return decoded as DecodeToken
   } catch (error) {
-    console.log('Error decodeToken', error)
+    //console.log('Error decodeToken', error)
     return null
   }
 }

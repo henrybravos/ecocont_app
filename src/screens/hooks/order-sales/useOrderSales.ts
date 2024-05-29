@@ -6,7 +6,7 @@ import ProductService from '@core/graphql/ProductService'
 import { MovementOrder } from '@core/types/order-sales'
 import { Product } from '@core/types/product'
 import { Invoice } from '@core/types/sales'
-import { AttentionPoint, Checkout } from '@core/types/user'
+import { AttentionPoint, Checkout, SalesArea } from '@core/types/user'
 
 import { useFetchApi } from '@hooks/index'
 
@@ -16,7 +16,7 @@ type ProductSelected = {
   mode?: 'edit' | 'delete'
   movement?: Partial<MovementOrder>
 }
-const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
+const useOrderSales = (point: AttentionPoint | undefined, area: SalesArea, checkout?: Checkout) => {
   const [products, setProducts] = useState<Product[]>([])
   const openSwipeProduct = useRef<Swipeable | null>(null)
   const [searchText, setSearchText] = useState<string>('')
@@ -46,16 +46,14 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
   const [productOrders, setProductOrders] = useState<Partial<MovementOrder>[]>([])
   const [categoryIdSelected, setCategoryIdSelected] = useState<string>('TOP')
   useEffect(() => {
-    if (point.orderId) {
+    if (point?.orderId) {
       fetchOrder({ orderId: point.orderId })
     } else {
       resetOrder()
     }
-    if (point.id) {
-      fetchProducts()
-      fetchCategories()
-    }
-  }, [point.orderId])
+    fetchProducts()
+    fetchCategories()
+  }, [point?.orderId])
 
   useEffect(() => {
     if (categoryIdSelected !== 'TOP') {
@@ -90,11 +88,10 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
   useEffect(() => {
     if (invoiceCreateId) {
       fetchOrder({
-        orderId: point.orderId || invoiceCreateId,
+        orderId: point?.orderId || invoiceCreateId,
       })
     }
   }, [invoiceCreateId])
-  if (!point.id) return
   const fetchProducts = () => {
     if (searchText.trim().length === 0) {
       if (categoryIdSelected === 'TOP') {
@@ -213,6 +210,9 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
     openSwipeProduct.current = swipeable.current
   }
   const createOrUpdateOrder = () => {
+    if (!area) {
+      return
+    }
     const itemsOlder = order?.movementOrder || []
     const itemsNew = productOrders
     const items: { old: MovementOrder; new: MovementOrder }[] = itemsNew.map((item) => {
@@ -238,10 +238,10 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
       operationType: '0101',
       extraData: {
         checkoutId: checkout?.id || '',
-        pointAttentionId: point.id,
+        pointAttentionId: point?.id || '',
         orderId: order?.id,
         salesId: order?.id,
-        areaId: point.areaId,
+        areaId: point?.areaId || area.id,
       },
       items,
     }
@@ -261,8 +261,9 @@ const useOrderSales = (point: AttentionPoint, checkout?: Checkout) => {
     checkout,
     point: {
       ...point,
-      orderId: point.orderId ?? order?.id ?? invoiceCreateId,
+      orderId: point?.orderId ?? order?.id ?? invoiceCreateId,
     },
+    area,
     products,
     totalOrder,
     categories,

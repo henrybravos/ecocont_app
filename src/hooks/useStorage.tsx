@@ -10,7 +10,7 @@ function useStorage<T>(key: string, initialValue?: T | undefined) {
         const storedValue = await AsyncStorage.getItem(key)
         if (storedValue !== null) setValue(JSON.parse(storedValue))
       } catch (error) {
-        console.log(`Error retrieving value for key "${key}":`, error)
+        //console.log(`Error retrieving value for key "${key}":`, error)
       }
     }
 
@@ -22,7 +22,7 @@ function useStorage<T>(key: string, initialValue?: T | undefined) {
       try {
         await AsyncStorage.setItem(key, JSON.stringify(value ?? {}))
       } catch (error) {
-        console.log(`Error saving value for key "${key}":`, error)
+        //console.log(`Error saving value for key "${key}":`, error)
       }
     }
 
@@ -34,7 +34,7 @@ function useStorage<T>(key: string, initialValue?: T | undefined) {
       await AsyncStorage.removeItem(key)
       setValue(initialValue)
     } catch (error) {
-      console.log(`Error resetting value for key "${key}":`, error)
+      //console.log(`Error resetting value for key "${key}":`, error)
     }
   }
 
