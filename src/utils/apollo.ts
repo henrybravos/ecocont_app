@@ -1,4 +1,6 @@
-import { createNavigationContainerRef } from '@react-navigation/native'
+import * as Updates from 'expo-updates'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { CommonActions } from '@react-navigation/native'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
@@ -8,48 +10,57 @@ import { ServerError } from 'apollo-link-http-common'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
+import { Alert } from 'react-native'
 
 import { getAuthenticationStorage } from '@utils/scripts'
 
 import { URL_API, WS_URL } from '@constants/environment'
-import { RootStackParamList, SCREENS } from '@constants/types/navigation'
+import { LOCAL } from '@constants/local-storage'
 
+import * as RootNavigation from '../navigation/RootNavigation'
 import { SESSION_IN_OTHER_DEVICE, TOKEN_EXPIRED, TOKEN_INVALID } from './error'
-
-export const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
 let authToken = ''
 
 const updateAuthToken = async () => {
   authToken = (await getAuthenticationStorage()) || ''
-  console.log('authToken', authToken)
+}
+const closeSession = async (message: string) => {
+  await AsyncStorage.removeItem(LOCAL.USER_AUTH)
+  Alert.alert('Alerta!!', message, [
+    {
+      text: 'OK',
+      onPress: async () => {
+        if (RootNavigation.navigationRef.isReady()) {
+          await AsyncStorage.setItem(LOCAL.USER_AUTH, JSON.stringify({}))
+          Updates.reloadAsync()
+        }
+      },
+    },
+  ])
 }
 updateAuthToken()
 const getClient = () => {
   return new ApolloClient({
     link: ApolloLink.from([
-      onError(({ networkError }) => {
-        console.log('networkError', networkError)
+      onError(({ networkError, operation }) => {
+        console.log('networkError', networkError, operation)
         const error = networkError as ServerError
         if (error && error.statusCode) {
           switch (error.statusCode) {
             case TOKEN_EXPIRED:
               console.log('El Token ha Expirado')
-              if (navigationRef.isReady()) {
-                navigationRef.navigate(SCREENS.LOGIN)
-              }
+              closeSession('La sesión ha Expirado, vuelva a loguearse')
               break
             case SESSION_IN_OTHER_DEVICE:
               console.log('Sesión iniciada en otro dispositivo')
-              if (navigationRef.isReady()) {
-                navigationRef.navigate(SCREENS.LOGIN)
-              }
+              console.log('login after session other device')
+              // navigationRef.navigate(SCREENS.LOGIN)
+              closeSession('Sesión iniciada en otro dispositivo')
               break
             case TOKEN_INVALID:
               console.log('No tiene los privilegios...')
-              if (navigationRef.isReady()) {
-                navigationRef.navigate(SCREENS.LOGIN)
-              }
+              closeSession('No tiene los privilegios para acceder a esta aplicación')
               break
             default:
               break

@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { AuthService } from '@core/graphql'
 import { UserAuth } from '@core/types'
 
-import client from '@utils/apollo'
 import { validateToken } from '@utils/scripts'
 
 import { ITheme, LOCAL, light } from '@constants/index'
@@ -19,7 +18,6 @@ const emptyUserAuth = {
 const initValueContext: DataProviderProps = {
   isDark: false,
   theme: light,
-  client,
   setTheme: () => {},
   handleChangeMode: () => {},
   setUserAuth: () => {},
@@ -32,22 +30,36 @@ export const useDataProvider = () => {
   const isDark = useStorage<boolean>(LOCAL.IS_DARK)
   const userAuth = useStorage<UserAuth>(LOCAL.USER_AUTH)
   const [theme, setTheme] = useState<ITheme>(light)
-
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
   useEffect(() => {
-    const interval = setInterval(verifyAuth, 5000)
-    verifyAuth()
+    const remainToken = verifyAuth()
+    const timeout = remainToken <= 5 ? remainToken : remainToken - 5
+    console.log('REFRESH TOKEN EN', timeout, 'SEGUNDOS, pero VENCE EN', remainToken)
+    if (remainToken <= 0) {
+      handleClearUserAuth()
+    } else {
+      const timeoutId = setTimeout(() => {
+        refreshToken(userAuth.value?.auth?.refreshToken)
+      }, timeout * 1000)
+      setTimeoutId(timeoutId)
+    }
     return () => {
-      clearInterval(interval)
+      if (timeoutId) {
+        console.log('CLEAR TIMEOUT', timeoutId)
+        clearInterval(timeoutId)
+      }
     }
   }, [userAuth.value])
   const verifyAuth = () => {
-    const isValidTokenAuth = validateToken(userAuth.value?.auth?.authentication)
-    if (isValidTokenAuth) return
-    const isValidRefreshAuth = validateToken(userAuth.value?.auth?.refreshToken)
-    if (isValidRefreshAuth) {
+    const verifyToken = validateToken(userAuth.value?.auth?.authentication)
+    if (verifyToken.valid) return verifyToken.remain
+    const verifyRefreshToken = validateToken(userAuth.value?.auth?.refreshToken)
+    if (verifyRefreshToken.valid) {
       refreshToken(userAuth.value?.auth?.refreshToken)
+      return verifyRefreshToken.remain
     } else {
       handleClearUserAuth()
+      return 0
     }
   }
   const refreshToken = async (token: string | undefined) => {
@@ -76,7 +88,6 @@ export const useDataProvider = () => {
 
   return {
     theme,
-    client,
     setTheme,
     handleChangeMode,
     handleClearUserAuth,

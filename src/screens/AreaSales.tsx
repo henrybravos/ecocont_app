@@ -149,6 +149,7 @@ const AreaSales = () => {
   const areas = isCashier ? userSales?.areas || [] : checkoutSelected?.areas || []
 
   const isLoading = isLoadingUser || isLoadingPoints
+  if (isLoading) return <SkeletonAttentionPoints />
   return (
     <Block marginVertical={4} justify="flex-start">
       <StatusBar style="dark" />

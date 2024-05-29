@@ -7,6 +7,7 @@ import { Platform, StatusBar } from 'react-native'
 import { ThemeProvider, useAppData } from '@hooks/index'
 
 import Menu from './Menu'
+import { navigationRef } from './RootNavigation'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -54,7 +55,7 @@ export default () => {
 
   return (
     <ThemeProvider theme={theme} setTheme={setTheme}>
-      <NavigationContainer theme={navigationTheme}>
+      <NavigationContainer ref={navigationRef} theme={navigationTheme}>
         <Menu />
       </NavigationContainer>
     </ThemeProvider>

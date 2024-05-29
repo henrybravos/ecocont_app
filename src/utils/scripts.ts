@@ -19,17 +19,23 @@ export const decodeToken = (auth: string): DecodeToken | null => {
     return null
   }
 }
-export const validateToken = (token: string | undefined): boolean => {
+export const validateToken = (token: string | undefined): { valid: boolean; remain: number } => {
   if (token) {
     const tokenDecode = decodeToken(token)
     if (tokenDecode) {
       const tokenExpRemain = calculateSecondsRemaining(tokenDecode.exp * 1000)
       if (tokenExpRemain > 0) {
-        return true
+        return {
+          valid: true,
+          remain: tokenExpRemain,
+        }
       }
     }
   }
-  return false
+  return {
+    valid: false,
+    remain: 0,
+  }
 }
 export function calculateSecondsRemaining(dateMillis: number): number
 export function calculateSecondsRemaining(dateIso: string): number
