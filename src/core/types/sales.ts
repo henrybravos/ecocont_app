@@ -1,5 +1,8 @@
 import { MovementOrder } from '@core/types/order-sales'
 
+export type DocumentInvoiceType = '03' | '01' | '99'
+export type SeriesType = 'N' | 'F' | 'B'
+
 export type Sales = {
   id: string
 }

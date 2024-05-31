@@ -38,23 +38,21 @@ const closeSession = async (message: string) => {
     },
   ])
 }
-updateAuthToken()
 const getClient = () => {
+  updateAuthToken()
   return new ApolloClient({
     link: ApolloLink.from([
       onError(({ networkError, operation }) => {
-        //console.log('networkError', networkError, operation)
+        console.log('networkError', networkError, operation)
         const error = networkError as ServerError
         if (error && error.statusCode) {
           switch (error.statusCode) {
             case TOKEN_EXPIRED:
-              //console.log('El Token ha Expirado')
+              console.log('El Token ha Expirado')
               closeSession('La sesión ha Expirado, vuelva a loguearse')
               break
             case SESSION_IN_OTHER_DEVICE:
-              //console.log('Sesión iniciada en otro dispositivo')
-              //console.log('login after session other device')
-              // navigationRef.navigate(SCREENS.LOGIN)
+              console.log('Sesión iniciada en otro dispositivo')
               closeSession('Sesión iniciada en otro dispositivo')
               break
             case TOKEN_INVALID:

@@ -6,7 +6,7 @@ export type TypeInvoice = {
   name: string
   id: string
 }
-export type Customer = {
+export type CustomerSales = {
   identification: string
   businessName: string
   id: string
@@ -38,7 +38,7 @@ export type OrderSales = {
   sales: Sales
   series: string
   invoice: TypeInvoice
-  customer: Customer
+  customer: CustomerSales
   currency: Currency
   issueDate: string
   customerId: string
