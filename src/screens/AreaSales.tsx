@@ -1,8 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
-import { CommonActions } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
-import { StyleSheet, TouchableHighlight, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { Button, Icon, ProgressBar } from 'react-native-paper'
 
@@ -66,7 +65,6 @@ const AttentionPointComponent = ({ point, checkout }: AttentionPointComponentPro
 
 const AreaSales = () => {
   const navigation = useNavigation<StackNavigation>()
-
   const [checkoutSelected, setCheckoutSelected] = useState<Checkout | null>(null)
   const [areaSelected, setAreaSelected] = useState<SalesArea | null>(null)
   const [attentionPoints, setAttentionPoints] = useState<AttentionPoint[]>([])

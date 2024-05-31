@@ -15,6 +15,7 @@ import { AttentionPoint } from '@core/types/user'
 
 import { formatNumber } from '@utils/scripts'
 
+import { COLORS } from '@constants/light'
 import { SCREENS, StackNavigation } from '@constants/types/navigation'
 
 type OrderSaveConfirmButtonProps = Omit<ButtonProps, 'children'> & {}
@@ -97,7 +98,12 @@ const OrderDraggableBottom = () => {
         <Divider bold />
         <ProductListCartShopping />
         {ctx.order?.movementOrder.length > 0 && ctx.checkout?.id && (
-          <Button onPress={navigateToCheckpoint} mode="contained" compact>
+          <Button
+            buttonColor={COLORS.primary.toString()}
+            onPress={navigateToCheckpoint}
+            mode="contained"
+            compact
+          >
             COBRAR
           </Button>
         )}

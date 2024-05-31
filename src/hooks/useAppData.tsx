@@ -39,6 +39,7 @@ export const useDataProvider = () => {
       handleClearUserAuth()
     } else {
       const timeoutId = setTimeout(() => {
+        console.log('REFRESH TOKEN---', timeout)
         refreshToken(userAuth.value?.auth?.refreshToken)
       }, timeout * 1000)
       setTimeoutId(timeoutId)
